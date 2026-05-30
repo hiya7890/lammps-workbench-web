@@ -123,3 +123,4 @@ npm run audit:public
 - [Data Policy](docs/data_policy.md)
 - [Install And Usage](docs/install_or_usage.md)
 - [Company Safe Mode Explanation](docs/company_safe_mode.md)
+- [Common Core Inventory](docs/common_core_inventory.md)

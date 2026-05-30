@@ -1,18 +1,21 @@
 (function initLammpsCaseCore(root, factory) {
   if (typeof module === "object" && module.exports) {
-    module.exports = factory();
+    module.exports = factory(require("./caseDefinitions"));
   } else {
-    root.LammpsCaseCore = factory();
+    root.LammpsCaseCore = factory(root.LammpsCaseDefinitions);
   }
-})(typeof globalThis !== "undefined" ? globalThis : this, function createCore() {
+})(typeof globalThis !== "undefined" ? globalThis : this, function createCore(caseDefinitions) {
   const VERSION = "0.3.0";
 
-  const SUPPORTED_CASE_TYPES = {
-    lj_fluid: "Lennard-Jones fluid",
-    polymer_relaxation: "Simple polymer relaxation",
-    gas_diffusion: "Gas diffusion demo",
-    interface_demo: "Generic interface demo"
-  };
+  const definitions = caseDefinitions || {};
+  const SUPPORTED_CASE_TYPES = Object.fromEntries(
+    (definitions.listCaseDefinitions ? definitions.listCaseDefinitions() : [
+      { id: "lj_fluid", label: "Lennard-Jones fluid" },
+      { id: "polymer_relaxation", label: "Simple polymer relaxation" },
+      { id: "gas_diffusion", label: "Gas diffusion demo" },
+      { id: "interface_demo", label: "Generic interface demo" }
+    ]).map((definition) => [definition.id, definition.label])
+  );
 
   const DEFAULTS = {
     schemaVersion: "1.0",
@@ -48,9 +51,27 @@
     return Number.isFinite(numberValue) ? numberValue : fallback;
   }
 
+  function fieldFallbackValue(caseType, key, fallback) {
+    const field = definitions.getFieldsForCase
+      ? definitions.getFieldsForCase(caseType).find((candidate) => candidate.key === key)
+      : null;
+    return field && Object.prototype.hasOwnProperty.call(field, "default") ? field.default : fallback;
+  }
+
+  function defaultCaseForType(caseType) {
+    const safeCaseType = SUPPORTED_CASE_TYPES[caseType] ? caseType : DEFAULTS.caseType;
+    return Object.assign(
+      {},
+      DEFAULTS,
+      definitions.defaultValuesForCase ? definitions.defaultValuesForCase(safeCaseType) : {},
+      { caseType: safeCaseType }
+    );
+  }
+
   function normalizeCase(input) {
     const source = isPlainObject(input) ? input : {};
-    const normalized = deepClone(DEFAULTS);
+    const requestedCaseType = SUPPORTED_CASE_TYPES[source.caseType] ? source.caseType : DEFAULTS.caseType;
+    const normalized = deepClone(defaultCaseForType(requestedCaseType));
     Object.keys(source).forEach((key) => {
       if (key === "box" && isPlainObject(source.box)) {
         normalized.box = Object.assign({}, normalized.box, source.box);
@@ -64,17 +85,17 @@
     });
 
     normalized.schemaVersion = String(normalized.schemaVersion || DEFAULTS.schemaVersion);
-    normalized.caseType = SUPPORTED_CASE_TYPES[normalized.caseType] ? normalized.caseType : DEFAULTS.caseType;
-    normalized.title = String(normalized.title || DEFAULTS.title).trim();
+    normalized.caseType = SUPPORTED_CASE_TYPES[normalized.caseType] ? normalized.caseType : requestedCaseType;
+    normalized.title = String(normalized.title || fieldFallbackValue(normalized.caseType, "title", DEFAULTS.title)).trim();
     normalized.units = String(normalized.units || DEFAULTS.units).trim();
     normalized.atomStyle = String(normalized.atomStyle || DEFAULTS.atomStyle).trim();
     normalized.boundary = String(normalized.boundary || DEFAULTS.boundary).trim();
-    normalized.timestep = toNumber(normalized.timestep, DEFAULTS.timestep);
-    normalized.steps = Math.max(0, Math.floor(toNumber(normalized.steps, DEFAULTS.steps)));
-    normalized.thermo = Math.max(1, Math.floor(toNumber(normalized.thermo, DEFAULTS.thermo)));
-    normalized.temperature = toNumber(normalized.temperature, DEFAULTS.temperature);
-    normalized.density = toNumber(normalized.density, DEFAULTS.density);
-    normalized.seed = Math.max(1, Math.floor(toNumber(normalized.seed, DEFAULTS.seed)));
+    normalized.timestep = toNumber(normalized.timestep, fieldFallbackValue(normalized.caseType, "timestep", DEFAULTS.timestep));
+    normalized.steps = Math.floor(toNumber(normalized.steps, fieldFallbackValue(normalized.caseType, "steps", DEFAULTS.steps)));
+    normalized.thermo = Math.floor(toNumber(normalized.thermo, fieldFallbackValue(normalized.caseType, "thermo", DEFAULTS.thermo)));
+    normalized.temperature = toNumber(normalized.temperature, fieldFallbackValue(normalized.caseType, "temperature", DEFAULTS.temperature));
+    normalized.density = toNumber(normalized.density, fieldFallbackValue(normalized.caseType, "density", DEFAULTS.density));
+    normalized.seed = Math.floor(toNumber(normalized.seed, fieldFallbackValue(normalized.caseType, "seed", DEFAULTS.seed)));
     normalized.box = {
       x: toNumber(normalized.box.x, DEFAULTS.box.x),
       y: toNumber(normalized.box.y, DEFAULTS.box.y),
@@ -97,12 +118,19 @@
   function validateCase(caseDefinition) {
     const current = normalizeCase(caseDefinition);
     const errors = [];
-    if (!current.title) errors.push("title is required.");
-    if (current.timestep <= 0) errors.push("timestep must be positive.");
-    if (current.steps < 0) errors.push("steps must be zero or positive.");
-    if (current.thermo <= 0) errors.push("thermo must be positive.");
-    if (current.temperature <= 0) errors.push("temperature must be positive.");
-    if (current.density <= 0) errors.push("density must be positive.");
+    const fields = definitions.getFieldsForCase ? definitions.getFieldsForCase(current.caseType) : [];
+    fields.forEach((field) => {
+      const value = current[field.key];
+      if (field.required && (value === "" || value === null || value === undefined)) {
+        errors.push(`${field.key} is required.`);
+      }
+      if (field.validation?.positive && !(Number(value) > 0)) {
+        errors.push(`${field.key} must be positive.`);
+      }
+      if (field.validation?.min !== undefined && Number(value) < Number(field.validation.min)) {
+        errors.push(`${field.key} must be at least ${field.validation.min}.`);
+      }
+    });
     ["x", "y", "z"].forEach((axis) => {
       if (current.box[axis] <= 0) errors.push(`box.${axis} must be positive.`);
     });
@@ -169,7 +197,36 @@
   }
 
   function generateCaseJson(caseDefinition) {
-    return `${JSON.stringify(normalizeCase(caseDefinition), null, 2)}\n`;
+    return `${JSON.stringify(serializeCase(caseDefinition), null, 2)}\n`;
+  }
+
+  function serializeCase(caseDefinition) {
+    return normalizeCase(caseDefinition);
+  }
+
+  function deserializeCase(caseJson) {
+    const parsed = typeof caseJson === "string" ? JSON.parse(caseJson) : caseJson;
+    return normalizeCase(parsed);
+  }
+
+  function listCaseDefinitions() {
+    return definitions.listCaseDefinitions ? definitions.listCaseDefinitions() : [];
+  }
+
+  function getCaseDefinition(caseType) {
+    return definitions.getCaseDefinition ? definitions.getCaseDefinition(caseType) : null;
+  }
+
+  function getFieldsForCase(caseType) {
+    return definitions.getFieldsForCase ? definitions.getFieldsForCase(caseType) : [];
+  }
+
+  function listPresets(caseType) {
+    return definitions.listPresets ? definitions.listPresets(caseType) : [];
+  }
+
+  function buildCaseFromFieldValues(caseType, values) {
+    return normalizeCase(Object.assign({}, definitions.defaultValuesForCase ? definitions.defaultValuesForCase(caseType) : {}, values, { caseType }));
   }
 
   function generateProcedure(caseDefinition) {
@@ -192,8 +249,15 @@
     VERSION,
     SUPPORTED_CASE_TYPES,
     DEFAULTS,
+    listCaseDefinitions,
+    getCaseDefinition,
+    getFieldsForCase,
+    listPresets,
+    buildCaseFromFieldValues,
     normalizeCase,
     validateCase,
+    serializeCase,
+    deserializeCase,
     generateLammpsInput,
     generateCaseJson,
     generateProcedure

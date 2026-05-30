@@ -1,6 +1,6 @@
 # LAMMPS Workbench Core
 
-`core/` contains the shared case definition, validation, templates, and LAMMPS input generation used by both Web Safe Mode and Local Runner Mode.
+`core/` contains the shared case definition, field metadata, presets, validation, templates, and LAMMPS input generation used by both Web Safe Mode and Local Runner Mode.
 
 Design rules:
 
@@ -16,3 +16,8 @@ Current public demo case types:
 - `gas_diffusion`
 - `interface_demo`
 
+Files:
+
+- `caseDefinitions.js`: case type definitions, field definitions, and public presets.
+- `lammpsCase.js`: normalization, validation, `case.json` serialization, LAMMPS input generation, and procedure generation.
+- `case.schema.json`: portable JSON schema reference for the shared case format.

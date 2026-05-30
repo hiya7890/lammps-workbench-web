@@ -1,35 +1,89 @@
 (function initWebSafeApp() {
   const core = window.LammpsCaseCore;
-  const fields = {
-    caseType: document.querySelector("#caseType"),
-    title: document.querySelector("#title"),
-    temperature: document.querySelector("#temperature"),
-    density: document.querySelector("#density"),
-    steps: document.querySelector("#steps"),
-    thermo: document.querySelector("#thermo"),
-    timestep: document.querySelector("#timestep"),
-    seed: document.querySelector("#seed")
-  };
+  const caseForm = document.querySelector("#caseForm");
   const outputs = {
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
     procedure: document.querySelector("#procedureOutput"),
     status: document.querySelector("#status")
   };
+  const state = {
+    caseType: "lj_fluid",
+    fields: []
+  };
 
   document.querySelector("#versionBadge").textContent = `core ${core.VERSION}`;
 
-  function buildCaseFromForm() {
-    return core.normalizeCase({
-      caseType: fields.caseType.value,
-      title: fields.title.value,
-      temperature: Number(fields.temperature.value),
-      density: Number(fields.density.value),
-      steps: Number(fields.steps.value),
-      thermo: Number(fields.thermo.value),
-      timestep: Number(fields.timestep.value),
-      seed: Number(fields.seed.value)
+  function createOption(value, label) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    return option;
+  }
+
+  function createInput(field, value) {
+    const input = document.createElement("input");
+    input.id = `field-${field.key}`;
+    input.name = field.key;
+    input.value = value ?? field.default ?? "";
+    input.dataset.fieldKey = field.key;
+    if (field.type === "number" || field.type === "integer") {
+      input.type = "number";
+      if (field.min !== undefined) input.min = String(field.min);
+      if (field.step !== undefined) input.step = String(field.step);
+    } else {
+      input.type = "text";
+    }
+    if (field.required) input.required = true;
+    input.addEventListener("input", generate);
+    return input;
+  }
+
+  function renderForm(caseType, currentValues = {}) {
+    state.caseType = caseType;
+    state.fields = core.getFieldsForCase(caseType);
+    caseForm.replaceChildren();
+
+    const caseTypeLabel = document.createElement("label");
+    caseTypeLabel.textContent = "Case type";
+    const select = document.createElement("select");
+    select.id = "caseType";
+    core.listCaseDefinitions().forEach((definition) => {
+      select.appendChild(createOption(definition.id, definition.label));
     });
+    select.value = caseType;
+    select.addEventListener("input", () => {
+      const defaults = core.buildCaseFromFieldValues(select.value, {});
+      renderForm(select.value, defaults);
+      generate();
+    });
+    caseTypeLabel.appendChild(select);
+    caseForm.appendChild(caseTypeLabel);
+
+    const defaults = core.buildCaseFromFieldValues(caseType, currentValues);
+    state.fields.forEach((field) => {
+      const label = document.createElement("label");
+      label.textContent = field.label;
+      label.appendChild(createInput(field, defaults[field.key]));
+      caseForm.appendChild(label);
+    });
+  }
+
+  function fieldValue(field) {
+    const input = document.querySelector(`#field-${field.key}`);
+    if (!input) return field.default;
+    if (field.type === "number" || field.type === "integer") {
+      return Number(input.value);
+    }
+    return input.value;
+  }
+
+  function buildCaseFromForm() {
+    const values = {};
+    state.fields.forEach((field) => {
+      values[field.key] = fieldValue(field);
+    });
+    return core.buildCaseFromFieldValues(state.caseType, values);
   }
 
   function generate() {
@@ -55,6 +109,7 @@
   document.querySelector("#downloadCaseButton").addEventListener("click", () => downloadText("case.json", outputs.caseJson.value));
   document.querySelector("#downloadInputButton").addEventListener("click", () => downloadText("in.lammps", outputs.input.value));
   document.querySelector("#downloadProcedureButton").addEventListener("click", () => downloadText("procedure.md", outputs.procedure.value));
-  Object.values(fields).forEach((field) => field.addEventListener("input", generate));
+
+  renderForm(state.caseType, {});
   generate();
 })();

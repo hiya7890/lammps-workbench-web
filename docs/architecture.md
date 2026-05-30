@@ -4,7 +4,7 @@ LAMMPS Workbench is split into a shared core and two entry points.
 
 ```text
 core/
-  case schema, validation, templates, LAMMPS input generation
+  case schema, case definitions, field definitions, presets, validation, templates, LAMMPS input generation
 apps/web/
   static Web Safe Mode UI
 runners/
@@ -21,5 +21,6 @@ Boundary rules:
 - Local Runner Mode depends on `core/` and may use `runners/`, `python/`, `server.js`, `routes/`, and `services/`.
 - `core/` must not import runner, subprocess, shell, Python execution, external API, upload, or file-saving code.
 - Web and local generation must be tested from the same case definition.
+- Web form controls and Local Runner validation should read field metadata from `core/caseDefinitions.js`.
 
 The previous remote execution path is not part of Web Safe Mode. Treat it as a Local Runner compatibility feature until a separate review decides whether to keep or remove it.
