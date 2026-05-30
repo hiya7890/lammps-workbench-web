@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "caseType": "lj_fluid",
+  "title": "Public LJ fluid demo",
+  "temperature": 1.0,
+  "density": 0.75,
+  "steps": 1000,
+  "thermo": 100,
+  "timestep": 0.005,
+  "seed": 12345
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "caseType": "polymer_relaxation",
+  "title": "Public simple polymer relaxation demo",
+  "temperature": 1.0,
+  "density": 0.7,
+  "steps": 1500,
+  "thermo": 100,
+  "timestep": 0.005,
+  "seed": 24680
+}

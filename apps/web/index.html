@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LAMMPS Workbench Web Safe Mode</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">LAMMPS Workbench</p>
+      <h1>Web Safe Mode</h1>
+    </div>
+    <span class="version" id="versionBadge">core</span>
+  </header>
+
+  <main class="layout">
+    <section class="notice">
+      <h2>注意</h2>
+      <p>本Web版は公開デモ条件によるLAMMPS入力ファイル作成・操作確認用です。</p>
+      <p>社内材料名、顧客情報、未公開試験条件、開発テーマに紐づく条件は入力しないでください。</p>
+      <p>本Web版は解析実行、ファイルアップロード、外部保存を行いません。</p>
+      <p>社内条件を扱う場合は、所属組織の情報管理ルールに従い、会社管理下のローカル版または社内版を使用してください。</p>
+    </section>
+
+    <section class="panel">
+      <h2>Case</h2>
+      <div class="form-grid">
+        <label>
+          Case type
+          <select id="caseType">
+            <option value="lj_fluid">LJ fluid</option>
+            <option value="polymer_relaxation">Simple polymer relaxation</option>
+            <option value="gas_diffusion">Gas diffusion demo</option>
+            <option value="interface_demo">Generic interface demo</option>
+          </select>
+        </label>
+        <label>
+          Title
+          <input id="title" value="Public LJ fluid demo">
+        </label>
+        <label>
+          Temperature
+          <input id="temperature" type="number" min="0.001" step="0.1" value="1.0">
+        </label>
+        <label>
+          Density
+          <input id="density" type="number" min="0.001" step="0.05" value="0.75">
+        </label>
+        <label>
+          Steps
+          <input id="steps" type="number" min="0" step="100" value="1000">
+        </label>
+        <label>
+          Thermo interval
+          <input id="thermo" type="number" min="1" step="10" value="100">
+        </label>
+        <label>
+          Timestep
+          <input id="timestep" type="number" min="0.0001" step="0.001" value="0.005">
+        </label>
+        <label>
+          Seed
+          <input id="seed" type="number" min="1" step="1" value="12345">
+        </label>
+      </div>
+      <div class="actions">
+        <button id="generateButton" type="button">生成</button>
+        <button id="downloadCaseButton" type="button">case.json</button>
+        <button id="downloadInputButton" type="button">in.lammps</button>
+        <button id="downloadProcedureButton" type="button">procedure.md</button>
+      </div>
+      <p id="status" class="status">未生成</p>
+    </section>
+
+    <section class="output-grid">
+      <div class="panel">
+        <h2>case.json</h2>
+        <textarea id="caseOutput" spellcheck="false"></textarea>
+      </div>
+      <div class="panel">
+        <h2>in.lammps</h2>
+        <textarea id="inputOutput" spellcheck="false"></textarea>
+      </div>
+      <div class="panel wide">
+        <h2>procedure.md</h2>
+        <textarea id="procedureOutput" spellcheck="false"></textarea>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../core/lammpsCase.js"></script>
+  <script src="./webSafeApp.js"></script>
+</body>
+</html>

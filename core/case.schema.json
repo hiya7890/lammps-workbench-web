@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/lammps-workbench/case.schema.json",
+  "title": "LAMMPS Workbench public case",
+  "type": "object",
+  "required": ["schemaVersion", "caseType", "title", "steps", "temperature", "density"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "caseType": {
+      "type": "string",
+      "enum": ["lj_fluid", "polymer_relaxation", "gas_diffusion", "interface_demo"]
+    },
+    "title": { "type": "string" },
+    "units": { "type": "string" },
+    "atomStyle": { "type": "string" },
+    "boundary": { "type": "string" },
+    "timestep": { "type": "number", "exclusiveMinimum": 0 },
+    "steps": { "type": "integer", "minimum": 0 },
+    "thermo": { "type": "integer", "minimum": 1 },
+    "temperature": { "type": "number", "exclusiveMinimum": 0 },
+    "density": { "type": "number", "exclusiveMinimum": 0 },
+    "seed": { "type": "integer", "minimum": 1 },
+    "box": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number", "exclusiveMinimum": 0 },
+        "y": { "type": "number", "exclusiveMinimum": 0 },
+        "z": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "species": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "mass": { "type": "number", "exclusiveMinimum": 0 },
+          "epsilon": { "type": "number", "exclusiveMinimum": 0 },
+          "sigma": { "type": "number", "exclusiveMinimum": 0 }
+        }
+      }
+    }
+  }
+}
