@@ -87,6 +87,7 @@
       id: "lj_fluid",
       label: "LJ fluid",
       description: "Public Lennard-Jones fluid input generation demo.",
+      modes: ["web_safe", "local_runner"],
       fields: COMMON_FIELDS,
       presetIds: ["lj_fluid_public"]
     },
@@ -94,6 +95,7 @@
       id: "polymer_relaxation",
       label: "Simple polymer relaxation",
       description: "Public placeholder for a simple polymer relaxation workflow.",
+      modes: ["web_safe", "local_runner"],
       fields: COMMON_FIELDS.map((field) => (
         field.key === "title"
           ? { ...field, default: "Public simple polymer relaxation demo" }
@@ -111,6 +113,7 @@
       id: "gas_diffusion",
       label: "Gas diffusion demo",
       description: "Public gas diffusion input generation demo.",
+      modes: ["web_safe", "local_runner"],
       fields: COMMON_FIELDS.map((field) => (
         field.key === "title"
           ? { ...field, default: "Public gas diffusion demo" }
@@ -130,6 +133,7 @@
       id: "interface_demo",
       label: "Generic interface demo",
       description: "Public generic interface input generation demo.",
+      modes: ["web_safe", "local_runner"],
       fields: COMMON_FIELDS.map((field) => (
         field.key === "title"
           ? { ...field, default: "Public generic interface demo" }
@@ -140,6 +144,30 @@
               : field
       )),
       presetIds: ["interface_demo_public"]
+    },
+    {
+      id: "cg_scaffold",
+      label: "CG scaffold",
+      description: "Representative Local GUI CG scaffold path shared with the local service layer.",
+      modes: ["local_gui", "local_runner"],
+      fields: [
+        { key: "title", label: "Title", type: "text", default: "CG scaffold", required: true, validation: { required: true } },
+        { key: "units", label: "Units", type: "text", default: "lj", required: true },
+        { key: "atomStyle", label: "Atom style", type: "text", default: "atomic", required: true },
+        { key: "pairStyle", label: "Pair style", type: "text", default: "lj/cut 12.0", required: true },
+        { key: "pairCoeff", label: "Pair coeff", type: "text", default: "1 1 1.0 1.0 12.0", required: true },
+        { key: "thermo", label: "Thermo interval", type: "integer", default: 100, min: 1, step: 10, required: true, validation: { min: 1 } },
+        { key: "runSteps", label: "Run steps", type: "integer", default: 5000, min: 0, step: 100, required: true, validation: { min: 0 } },
+        { key: "timestep", label: "Timestep", type: "number", default: 0.005, min: 0.0001, step: 0.001, required: true, validation: { positive: true } },
+        { key: "temperature", label: "Temperature", type: "number", default: 1.0, min: 0.001, step: 0.1, required: true, validation: { positive: true } },
+        { key: "density", label: "Density", type: "number", default: 0.75, min: 0.001, step: 0.05, required: false, validation: { positive: true } },
+        { key: "beadCount", label: "Total CG bead count", type: "integer", default: 32, min: 1, step: 1, required: true, validation: { min: 1 } },
+        { key: "chainCount", label: "Chain count", type: "integer", default: 4, min: 1, step: 1, required: true, validation: { min: 1 } },
+        { key: "repeatCountPerChain", label: "Repeat units per chain", type: "integer", default: 8, min: 1, step: 1, required: true, validation: { min: 1 } },
+        { key: "deformAxis", label: "Deformation axis", type: "select", default: "none", options: ["none", "x", "y", "z"], required: false },
+        { key: "deformRate", label: "Deformation rate", type: "number", default: 0.0, step: 0.0001, required: false }
+      ],
+      presetIds: ["cg_scaffold_public_lj"]
     }
   ];
 
@@ -206,6 +234,30 @@
         thermo: 100,
         timestep: 0.005,
         seed: 97531
+      }
+    },
+    {
+      id: "cg_scaffold_public_lj",
+      caseType: "cg_scaffold",
+      label: "Public CG scaffold LJ defaults",
+      values: {
+        schemaVersion: "1.0",
+        caseType: "cg_scaffold",
+        title: "CG scaffold",
+        units: "lj",
+        atomStyle: "atomic",
+        pairStyle: "lj/cut 12.0",
+        pairCoeff: "1 1 1.0 1.0 12.0",
+        thermo: 100,
+        runSteps: 5000,
+        timestep: 0.005,
+        temperature: 1.0,
+        density: 0.75,
+        beadCount: 32,
+        chainCount: 4,
+        repeatCountPerChain: 8,
+        deformAxis: "none",
+        deformRate: 0.0
       }
     }
   ];

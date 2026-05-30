@@ -48,9 +48,11 @@
     caseTypeLabel.textContent = "Case type";
     const select = document.createElement("select");
     select.id = "caseType";
-    core.listCaseDefinitions().forEach((definition) => {
+    core.listCaseDefinitions()
+      .filter((definition) => !Array.isArray(definition.modes) || definition.modes.includes("web_safe"))
+      .forEach((definition) => {
       select.appendChild(createOption(definition.id, definition.label));
-    });
+      });
     select.value = caseType;
     select.addEventListener("input", () => {
       const defaults = core.buildCaseFromFieldValues(select.value, {});
