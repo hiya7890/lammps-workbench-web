@@ -1,6 +1,9 @@
 (function initWebSafeApp() {
   const core = window.LammpsCaseCore;
   const caseForm = document.querySelector("#caseForm");
+  const presetSelect = document.querySelector("#presetSelect");
+  const caseSummary = document.querySelector("#caseSummary");
+  const fileChecklist = document.querySelector("#fileChecklist");
   const outputs = {
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
@@ -53,6 +56,7 @@
     state.caseType = caseType;
     state.fields = core.getFieldsForCase(caseType);
     caseForm.replaceChildren();
+    renderPresets(caseType);
 
     const caseTypeLabel = document.createElement("label");
     const caseTypeText = document.createElement("span");
@@ -98,6 +102,20 @@
     });
   }
 
+  function renderPresets(caseType) {
+    const presets = core.listPresets(caseType).filter((preset) => {
+      const definition = core.getCaseDefinition(preset.caseType);
+      return definition?.modes?.includes("web_safe");
+    });
+    presetSelect.replaceChildren();
+    presets.forEach((preset) => {
+      presetSelect.appendChild(createOption(preset.id, preset.label));
+    });
+    if (!presets.length) {
+      presetSelect.appendChild(createOption("", "No preset"));
+    }
+  }
+
   function sectionLabel(sectionKey) {
     return {
       case: "Case",
@@ -136,7 +154,55 @@
     outputs.moltemplate.value = core.generateMoltemplateLt(caseDefinition);
     outputs.handoff.value = buildHandoffText(caseDefinition, validation);
     outputs.runCommand.textContent = buildRunCommandText(currentRunFolder(caseDefinition));
+    renderCaseSummary(caseDefinition);
+    renderFileChecklist(caseDefinition);
     outputs.status.textContent = validation.ok ? "生成しました。コピーまたはダウンロードできます。" : validation.errors.join(" ");
+  }
+
+  function renderCaseSummary(caseDefinition) {
+    const current = core.serializeCase(caseDefinition);
+    const items = [
+      ["Case", current.caseType],
+      ["Steps", current.steps ?? current.runSteps],
+      ["Timestep", current.timestep],
+      ["Thermo", current.thermo]
+    ];
+    if (current.caseType === "cg_scaffold") {
+      items.push(["Beads", current.beadCount]);
+      items.push(["Chains", `${current.chainCount} x ${current.repeatCountPerChain}`]);
+      items.push(["Pair", current.pairStyle]);
+    }
+    caseSummary.replaceChildren(...items.map(([label, value]) => {
+      const item = document.createElement("div");
+      const key = document.createElement("span");
+      key.textContent = label;
+      const val = document.createElement("strong");
+      val.textContent = String(value ?? "");
+      item.append(key, val);
+      return item;
+    }));
+  }
+
+  function renderFileChecklist(caseDefinition) {
+    const current = core.serializeCase(caseDefinition);
+    const files = [
+      ["case.json", "条件の保存・再現用"],
+      ["in.lammps", "LAMMPSで実行する入力"],
+      ["procedure.md", "実行手順メモ"]
+    ];
+    if (current.caseType === "cg_scaffold") {
+      files.push(["packmol.inp", "PACKMOL配置の下書き"]);
+      files.push(["system.lt", "Moltemplate LTの下書き"]);
+    }
+    fileChecklist.replaceChildren(...files.map(([name, description]) => {
+      const item = document.createElement("div");
+      const code = document.createElement("code");
+      code.textContent = name;
+      const span = document.createElement("span");
+      span.textContent = description;
+      item.append(code, span);
+      return item;
+    }));
   }
 
   function currentRunFolder(caseDefinition) {
@@ -219,6 +285,13 @@
     generate();
   }
 
+  function applySelectedPreset() {
+    const preset = core.listPresets(state.caseType).find((candidate) => candidate.id === presetSelect.value);
+    if (!preset) return;
+    renderForm(state.caseType, preset.values);
+    generate();
+  }
+
   function showTab(targetId) {
     document.querySelectorAll(".tab-view").forEach((view) => {
       view.classList.toggle("is-active", view.id === targetId);
@@ -230,6 +303,7 @@
 
   document.querySelector("#generateButton").addEventListener("click", generate);
   document.querySelector("#resetButton").addEventListener("click", resetToDefaults);
+  document.querySelector("#applyPresetButton").addEventListener("click", applySelectedPreset);
   document.querySelectorAll("[data-tab-target]").forEach((button) => {
     button.addEventListener("click", () => showTab(button.dataset.tabTarget));
   });

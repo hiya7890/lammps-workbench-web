@@ -46,6 +46,14 @@
           <button id="resetButton" type="button" class="secondary-button">初期値に戻す</button>
         </div>
         <p class="helper-text">まず case type を選びます。CG scaffoldでは分子数、鎖長、pair係数などを同じ画面で入力できます。</p>
+        <div class="preset-bar">
+          <label>
+            <span>Preset</span>
+            <select id="presetSelect"></select>
+          </label>
+          <button id="applyPresetButton" type="button" class="secondary-button">Presetを適用</button>
+        </div>
+        <div id="caseSummary" class="summary-grid" aria-live="polite"></div>
         <div id="caseForm" class="form-grid"></div>
         <div class="actions">
           <button id="generateButton" type="button">生成</button>
@@ -107,6 +115,7 @@
           </div>
         </div>
         <p class="helper-text">ブラウザのダウンロード先に保存されたら、生成ファイルを同じ作業フォルダへ移動してください。LAMMPSはそのフォルダで <code>in.lammps</code> を実行します。</p>
+        <div id="fileChecklist" class="file-checklist" aria-live="polite"></div>
         <div class="actions">
           <button id="downloadCaseButton" type="button">case.jsonをDL</button>
           <button id="downloadInputButton" type="button">in.lammpsをDL</button>

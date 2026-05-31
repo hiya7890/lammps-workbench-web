@@ -236,6 +236,47 @@ pre {
   gap: 14px;
 }
 
+.preset-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfcfd;
+}
+
+.summary-grid,
+.file-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.summary-grid div,
+.file-checklist div {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.summary-grid span,
+.file-checklist span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.summary-grid strong {
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
 fieldset {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -352,7 +393,8 @@ textarea {
   .workspace,
   .mode-strip,
   .workbench-tabs,
-  .command-card {
+  .command-card,
+  .preset-bar {
     grid-template-columns: 1fr;
   }
 
