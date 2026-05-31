@@ -412,6 +412,82 @@ pre {
   font-size: 14px;
 }
 
+.preview-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  padding: 14px;
+  background: #fbfcfd;
+}
+
+.compact-head {
+  margin-bottom: 10px;
+}
+
+.compact-head h2 {
+  font-size: 16px;
+}
+
+.molecule-preview {
+  display: grid;
+  gap: 12px;
+}
+
+.preview-caption {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.chain-preview {
+  display: grid;
+  gap: 8px;
+}
+
+.chain-row {
+  display: flex;
+  align-items: center;
+  min-height: 18px;
+  overflow: hidden;
+}
+
+.bead-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+  border: 1px solid #0e5d50;
+  border-radius: 50%;
+  background: #37a188;
+}
+
+.preview-more,
+.preview-more-line {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.particle-box {
+  position: relative;
+  height: 180px;
+  border: 1px solid #b9c7d8;
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(15, 93, 80, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(15, 93, 80, 0.06) 1px, transparent 1px),
+    #ffffff;
+  background-size: 22px 22px;
+}
+
+.particle-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #166a5b;
+  box-shadow: 0 0 0 2px rgba(22, 106, 91, 0.14);
+}
+
 fieldset {
   border: 1px solid var(--line);
   border-radius: 8px;
