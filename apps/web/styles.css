@@ -230,6 +230,66 @@ code {
   color: #4a5568;
 }
 
+.procedure-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.procedure-toolbar span {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.procedure-toolbar .small-button.is-active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.folder-plan {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  border: 1px solid #b9d9d0;
+  border-radius: 8px;
+  padding: 12px;
+  background: #ffffff;
+}
+
+.compact-folder-plan {
+  margin: 0 0 14px;
+}
+
+.folder-plan > strong {
+  color: var(--accent);
+}
+
+.folder-tree {
+  display: grid;
+  gap: 6px;
+}
+
+.folder-tree div {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.9fr) minmax(0, 1.1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.folder-tree span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
 .examples-panel {
   border-color: #c8d7e6;
 }
@@ -635,7 +695,8 @@ textarea {
   .mode-strip,
   .workbench-tabs,
   .command-card,
-  .preset-bar {
+  .preset-bar,
+  .folder-tree div {
     grid-template-columns: 1fr;
   }
 

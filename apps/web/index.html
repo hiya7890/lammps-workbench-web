@@ -123,6 +123,12 @@
         <li><strong>見たい場合</strong><span>生成された <code>dump.demo.lammpstrj</code> をOVITOで開く</span></li>
       </ol>
       <div id="toolGuide" class="tool-guide" aria-live="polite"></div>
+      <div class="procedure-toolbar" aria-label="Procedure detail">
+        <span>手順表示</span>
+        <button type="button" class="small-button is-active" data-procedure-mode="simple">短縮版</button>
+        <button type="button" class="small-button" data-procedure-mode="detail">詳細版</button>
+      </div>
+      <div id="folderPlan" class="folder-plan" aria-live="polite"></div>
       <div class="command-card">
         <div>
           <span class="command-label">PowerShell例</span>
@@ -161,6 +167,7 @@
         </div>
         <p class="helper-text">ブラウザのダウンロード先に保存されたら、生成ファイルを同じ作業フォルダへ移動してください。LAMMPSはそのフォルダで <code>in.lammps</code> を実行します。</p>
         <div id="fileChecklist" class="file-checklist" aria-live="polite"></div>
+        <div id="fileFolderPlan" class="folder-plan compact-folder-plan" aria-live="polite"></div>
         <div class="file-use-note">
           <strong>迷ったら</strong>
           <span>まず <code>まとめてZIP</code> を保存して展開し、<code>in.lammps</code> だけをLAMMPSで実行してください。PACKMOL/MoltemplateはCG scaffoldを詳しく組み立てたい場合の追加下書きです。</span>

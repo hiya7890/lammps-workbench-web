@@ -8,6 +8,8 @@
   const toolGuide = document.querySelector("#toolGuide");
   const moleculePreview = document.querySelector("#moleculePreview");
   const validationPanel = document.querySelector("#validationPanel");
+  const folderPlan = document.querySelector("#folderPlan");
+  const fileFolderPlan = document.querySelector("#fileFolderPlan");
   const outputs = {
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
@@ -20,7 +22,8 @@
   };
   const state = {
     caseType: "lj_fluid",
-    fields: []
+    fields: [],
+    procedureMode: "simple"
   };
 
   document.querySelector("#versionBadge").textContent = `core ${core.VERSION}`;
@@ -188,7 +191,7 @@
     const validation = core.validateCase(caseDefinition);
     outputs.caseJson.value = core.generateCaseJson(caseDefinition);
     outputs.input.value = validation.ok ? core.generateLammpsInput(caseDefinition) : "";
-    outputs.procedure.value = core.generateProcedure(caseDefinition);
+    outputs.procedure.value = buildProcedureText(caseDefinition, validation);
     outputs.packmol.value = core.generatePackmolInput(caseDefinition);
     outputs.moltemplate.value = core.generateMoltemplateLt(caseDefinition);
     outputs.handoff.value = buildHandoffText(caseDefinition, validation);
@@ -197,6 +200,8 @@
     renderMoleculePreview(caseDefinition);
     renderFileChecklist(caseDefinition);
     renderToolGuide(caseDefinition);
+    renderFolderPlan(caseDefinition);
+    renderProcedureModeButtons();
     renderValidation(validation);
     outputs.status.textContent = validation.ok ? "生成しました。コピーまたはダウンロードできます。" : validation.errors.join(" ");
   }
@@ -277,6 +282,48 @@
       item.append(code, span);
       return item;
     }));
+  }
+
+  function renderFolderPlan(caseDefinition) {
+    const current = core.serializeCase(caseDefinition);
+    const folder = currentRunFolder(caseDefinition);
+    const rows = [
+      [folder, "作業フォルダ"],
+      ["case.json", "条件の記録"],
+      ["in.lammps", "LAMMPSに渡す入力"],
+      ["procedure.md", "実行手順"],
+      ["README_run.md", "受け渡しメモ"]
+    ];
+    if (current.caseType === "cg_scaffold") {
+      rows.push(["packmol.inp", "任意: PACKMOL用の配置下書き"]);
+      rows.push(["system.lt", "任意: Moltemplate用のLT下書き"]);
+    }
+    rows.push(["log.lammps", "実行後にLAMMPSが作成"]);
+    rows.push(["dump.demo.lammpstrj", "実行後に可視化するdump"]);
+    const renderTarget = (target, compact = false) => {
+      const title = document.createElement("strong");
+      title.textContent = compact ? "保存先の目安" : "作業フォルダの配置";
+      const tree = document.createElement("div");
+      tree.className = "folder-tree";
+      rows.forEach(([name, description], index) => {
+        const row = document.createElement("div");
+        const code = document.createElement("code");
+        code.textContent = index === 0 ? name : `  ${name}`;
+        const span = document.createElement("span");
+        span.textContent = description;
+        row.append(code, span);
+        tree.appendChild(row);
+      });
+      target.replaceChildren(title, tree);
+    };
+    renderTarget(folderPlan);
+    renderTarget(fileFolderPlan, true);
+  }
+
+  function renderProcedureModeButtons() {
+    document.querySelectorAll("[data-procedure-mode]").forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.procedureMode === state.procedureMode);
+    });
   }
 
   function renderMoleculePreview(caseDefinition) {
@@ -419,6 +466,48 @@
       lines.push(`OVITOで dump.demo.lammpstrj を開く`);
     } else {
       lines.push(`入力値にエラーがあります: ${validation.errors.join(" ")}`);
+    }
+    return `${lines.join("\n")}\n`;
+  }
+
+  function buildProcedureText(caseDefinition, validation) {
+    const current = core.serializeCase(caseDefinition);
+    const folder = currentRunFolder(caseDefinition);
+    if (state.procedureMode === "detail") {
+      return core.generateProcedure(caseDefinition);
+    }
+    const lines = [
+      `# LAMMPS Workbench Web Safe Mode quick procedure`,
+      ``,
+      `## 1. 作業フォルダ`,
+      folder,
+      ``,
+      `## 2. 保存するファイル`,
+      `- case.json`,
+      `- in.lammps`,
+      `- procedure.md`,
+      `- README_run.md`
+    ];
+    if (current.caseType === "cg_scaffold") {
+      lines.push(`- packmol.inp (任意)`);
+      lines.push(`- system.lt (任意)`);
+    }
+    lines.push(``);
+    lines.push(`## 3. 実行`);
+    lines.push(`作業フォルダで以下を実行します。Web版は実行しません。`);
+    lines.push(``);
+    lines.push(`\`\`\`powershell`);
+    lines.push(`cd ${folder}`);
+    lines.push(`lmp -in in.lammps`);
+    lines.push(`\`\`\``);
+    lines.push(``);
+    lines.push(`## 4. 確認`);
+    lines.push(`- log.lammps: LAMMPSログ`);
+    lines.push(`- dump.demo.lammpstrj: OVITOで開く可視化用dump`);
+    if (!validation.ok) {
+      lines.push(``);
+      lines.push(`## 入力エラー`);
+      validation.errors.forEach((error) => lines.push(`- ${error}`));
     }
     return `${lines.join("\n")}\n`;
   }
@@ -600,6 +689,12 @@
   document.querySelector("#copyPackmolButton").addEventListener("click", () => copyText(outputs.packmol.value, "packmol.inp"));
   document.querySelector("#copyMoltemplateButton").addEventListener("click", () => copyText(outputs.moltemplate.value, "system.lt"));
   document.querySelector("#copyHandoffButton").addEventListener("click", () => copyText(outputs.handoff.value, "受け渡し文"));
+  document.querySelectorAll("[data-procedure-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.procedureMode = button.dataset.procedureMode;
+      generate();
+    });
+  });
   document.querySelector("#copyRunCommandButton").addEventListener("click", () => copyText(outputs.runCommand.textContent, "実行コマンド"));
   document.querySelector("#downloadCaseButton").addEventListener("click", () => downloadText("case.json", outputs.caseJson.value));
   document.querySelector("#downloadInputButton").addEventListener("click", () => downloadText("in.lammps", outputs.input.value));
