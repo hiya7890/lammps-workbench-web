@@ -1,6 +1,7 @@
 (function initWebSafeApp() {
   const core = window.LammpsCaseCore;
   const caseForm = document.querySelector("#caseForm");
+  const workflowCards = document.querySelector("#workflowCards");
   const presetSelect = document.querySelector("#presetSelect");
   const caseSummary = document.querySelector("#caseSummary");
   const fileChecklist = document.querySelector("#fileChecklist");
@@ -56,6 +57,7 @@
     state.caseType = caseType;
     state.fields = core.getFieldsForCase(caseType);
     caseForm.replaceChildren();
+    renderWorkflowCards(caseType);
     renderPresets(caseType);
 
     const caseTypeLabel = document.createElement("label");
@@ -100,6 +102,40 @@
       label.appendChild(createInput(field, defaults[field.key]));
       sections.get(sectionKey).appendChild(label);
     });
+  }
+
+  function workflowKind(definition) {
+    return {
+      lj_fluid: "LAMMPS input",
+      polymer_relaxation: "Polymer demo",
+      gas_diffusion: "Diffusion demo",
+      interface_demo: "Interface demo",
+      cg_scaffold: "CG builder"
+    }[definition.id] || "Workflow";
+  }
+
+  function renderWorkflowCards(currentCaseType) {
+    const cards = core.listCaseDefinitions()
+      .filter((definition) => definition.modes?.includes("web_safe"))
+      .map((definition) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = `workflow-card${definition.id === currentCaseType ? " is-active" : ""}`;
+        const kind = document.createElement("span");
+        kind.textContent = workflowKind(definition);
+        const title = document.createElement("strong");
+        title.textContent = definition.label;
+        const description = document.createElement("small");
+        description.textContent = definition.description || "";
+        card.append(kind, title, description);
+        card.addEventListener("click", () => {
+          const defaults = core.buildCaseFromFieldValues(definition.id, {});
+          renderForm(definition.id, defaults);
+          generate();
+        });
+        return card;
+      });
+    workflowCards.replaceChildren(...cards);
   }
 
   function renderPresets(caseType) {
