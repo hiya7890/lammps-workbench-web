@@ -5,6 +5,8 @@
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
     procedure: document.querySelector("#procedureOutput"),
+    packmol: document.querySelector("#packmolOutput"),
+    moltemplate: document.querySelector("#moltemplateOutput"),
     handoff: document.querySelector("#handoffOutput"),
     runCommand: document.querySelector("#runCommandOutput"),
     status: document.querySelector("#status")
@@ -130,6 +132,8 @@
     outputs.caseJson.value = core.generateCaseJson(caseDefinition);
     outputs.input.value = validation.ok ? core.generateLammpsInput(caseDefinition) : "";
     outputs.procedure.value = core.generateProcedure(caseDefinition);
+    outputs.packmol.value = core.generatePackmolInput(caseDefinition);
+    outputs.moltemplate.value = core.generateMoltemplateLt(caseDefinition);
     outputs.handoff.value = buildHandoffText(caseDefinition, validation);
     outputs.runCommand.textContent = buildRunCommandText(currentRunFolder(caseDefinition));
     outputs.status.textContent = validation.ok ? "生成しました。コピーまたはダウンロードできます。" : validation.errors.join(" ");
@@ -144,16 +148,18 @@
   function buildHandoffText(caseDefinition, validation) {
     const current = core.serializeCase(caseDefinition);
     const folder = currentRunFolder(caseDefinition);
+    const handoffFiles = ["case.json", "in.lammps", "procedure.md"];
+    if (current.caseType === "cg_scaffold") {
+      handoffFiles.push("packmol.inp", "system.lt");
+    }
     const lines = [
       `LAMMPS Workbench Web Safe Mode 受け渡しメモ`,
       ``,
       `1. 作業フォルダを作成`,
       folder,
       ``,
-      `2. この3ファイルを同じフォルダへ保存`,
-      `case.json`,
-      `in.lammps`,
-      `procedure.md`,
+      `2. このファイルを同じフォルダへ保存`,
+      ...handoffFiles,
       ``,
       `3. LAMMPSで実行`,
       `cd ${folder}`,
@@ -219,10 +225,14 @@
   document.querySelector("#copyInputButton").addEventListener("click", () => copyText(outputs.input.value, "in.lammps"));
   document.querySelector("#copyInputFromPanelButton").addEventListener("click", () => copyText(outputs.input.value, "in.lammps"));
   document.querySelector("#copyProcedureButton").addEventListener("click", () => copyText(outputs.procedure.value, "procedure.md"));
+  document.querySelector("#copyPackmolButton").addEventListener("click", () => copyText(outputs.packmol.value, "packmol.inp"));
+  document.querySelector("#copyMoltemplateButton").addEventListener("click", () => copyText(outputs.moltemplate.value, "system.lt"));
   document.querySelector("#copyHandoffButton").addEventListener("click", () => copyText(outputs.handoff.value, "受け渡し文"));
   document.querySelector("#copyRunCommandButton").addEventListener("click", () => copyText(outputs.runCommand.textContent, "実行コマンド"));
   document.querySelector("#downloadCaseButton").addEventListener("click", () => downloadText("case.json", outputs.caseJson.value));
   document.querySelector("#downloadInputButton").addEventListener("click", () => downloadText("in.lammps", outputs.input.value));
+  document.querySelector("#downloadPackmolButton").addEventListener("click", () => downloadText("packmol.inp", outputs.packmol.value));
+  document.querySelector("#downloadMoltemplateButton").addEventListener("click", () => downloadText("system.lt", outputs.moltemplate.value));
   document.querySelector("#downloadProcedureButton").addEventListener("click", () => downloadText("procedure.md", outputs.procedure.value));
 
   renderForm(state.caseType, {});

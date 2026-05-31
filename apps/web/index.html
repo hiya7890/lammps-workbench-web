@@ -26,7 +26,7 @@
 
     <section class="mode-strip" aria-label="Web Safe Mode workflow">
       <div><strong>1. 入力</strong><span>Case / Molecule / Protocol を入力</span></div>
-      <div><strong>2. 保存</strong><span>3ファイルを同じ作業フォルダへ置く</span></div>
+      <div><strong>2. 保存</strong><span>生成ファイルを同じ作業フォルダへ置く</span></div>
       <div><strong>3. 実行</strong><span>LAMMPS側で in.lammps を開く</span></div>
     </section>
 
@@ -40,7 +40,7 @@
       <ol class="quickstart-list">
         <li><strong>作業フォルダを作る</strong><span>例: <code>C:\lammps-demo\lj-fluid</code></span></li>
         <li><strong>このWeb画面で生成する</strong><span>まずは初期値のまま <code>生成</code> を押す</span></li>
-        <li><strong>3ファイルを同じフォルダへ保存</strong><span><code>case.json</code>, <code>in.lammps</code>, <code>procedure.md</code></span></li>
+        <li><strong>生成ファイルを同じフォルダへ保存</strong><span><code>case.json</code>, <code>in.lammps</code>, <code>procedure.md</code>、CG scaffoldでは <code>packmol.inp</code>, <code>system.lt</code> も必要に応じて保存</span></li>
         <li><strong>LAMMPSで実行</strong><span>作業フォルダで <code>lmp -in in.lammps</code></span></li>
         <li><strong>見たい場合</strong><span>生成された <code>dump.demo.lammpstrj</code> をOVITOで開く</span></li>
       </ol>
@@ -87,13 +87,15 @@
       <div class="panel-head">
         <div>
           <p class="section-kicker">ダウンロード</p>
-          <h2>同じ作業フォルダに保存する3ファイル</h2>
+          <h2>同じ作業フォルダに保存するファイル</h2>
         </div>
       </div>
-      <p class="helper-text">ブラウザのダウンロード先に保存されたら、3ファイルを同じ作業フォルダへ移動してください。LAMMPSはそのフォルダで <code>in.lammps</code> を実行します。</p>
+      <p class="helper-text">ブラウザのダウンロード先に保存されたら、生成ファイルを同じ作業フォルダへ移動してください。LAMMPSはそのフォルダで <code>in.lammps</code> を実行します。</p>
       <div class="actions">
         <button id="downloadCaseButton" type="button">case.jsonをDL</button>
         <button id="downloadInputButton" type="button">in.lammpsをDL</button>
+        <button id="downloadPackmolButton" type="button">packmol.inpをDL</button>
+        <button id="downloadMoltemplateButton" type="button">system.ltをDL</button>
         <button id="downloadProcedureButton" type="button">procedure.mdをDL</button>
       </div>
     </section>
@@ -119,6 +121,20 @@
           <button id="copyProcedureButton" type="button" class="small-button">コピー</button>
         </div>
         <textarea id="procedureOutput" spellcheck="false"></textarea>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>packmol.inp</h2>
+          <button id="copyPackmolButton" type="button" class="small-button">コピー</button>
+        </div>
+        <textarea id="packmolOutput" spellcheck="false"></textarea>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>system.lt</h2>
+          <button id="copyMoltemplateButton" type="button" class="small-button">コピー</button>
+        </div>
+        <textarea id="moltemplateOutput" spellcheck="false"></textarea>
       </div>
     </section>
   </main>
