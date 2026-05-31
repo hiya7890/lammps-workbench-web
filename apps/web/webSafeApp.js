@@ -7,6 +7,7 @@
   const fileChecklist = document.querySelector("#fileChecklist");
   const toolGuide = document.querySelector("#toolGuide");
   const moleculePreview = document.querySelector("#moleculePreview");
+  const validationPanel = document.querySelector("#validationPanel");
   const outputs = {
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
@@ -196,7 +197,39 @@
     renderMoleculePreview(caseDefinition);
     renderFileChecklist(caseDefinition);
     renderToolGuide(caseDefinition);
+    renderValidation(validation);
     outputs.status.textContent = validation.ok ? "生成しました。コピーまたはダウンロードできます。" : validation.errors.join(" ");
+  }
+
+  function clearFieldValidation() {
+    document.querySelectorAll("[data-field-key]").forEach((input) => {
+      input.classList.remove("is-invalid");
+      input.removeAttribute("aria-invalid");
+      input.removeAttribute("title");
+    });
+  }
+
+  function renderValidation(validation) {
+    clearFieldValidation();
+    validationPanel.replaceChildren();
+    validationPanel.classList.toggle("is-hidden", validation.ok);
+    if (validation.ok) return;
+    const title = document.createElement("strong");
+    title.textContent = "入力を確認してください";
+    const list = document.createElement("ul");
+    validation.errors.forEach((error) => {
+      const item = document.createElement("li");
+      item.textContent = error;
+      list.appendChild(item);
+      const fieldKey = String(error).split(/\s+/)[0];
+      const input = document.querySelector(`[data-field-key="${fieldKey}"]`);
+      if (input) {
+        input.classList.add("is-invalid");
+        input.setAttribute("aria-invalid", "true");
+        input.title = error;
+      }
+    });
+    validationPanel.append(title, list);
   }
 
   function renderCaseSummary(caseDefinition) {

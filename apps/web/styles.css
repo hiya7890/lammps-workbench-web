@@ -566,6 +566,35 @@ button + button {
   color: var(--muted);
 }
 
+.validation-panel {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  border: 1px solid #dc7b4b;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff4ed;
+  color: #7a3216;
+}
+
+.validation-panel.is-hidden {
+  display: none;
+}
+
+.validation-panel ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid {
+  border-color: #c6532b;
+  box-shadow: 0 0 0 3px rgba(198, 83, 43, 0.12);
+}
+
 .output-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
