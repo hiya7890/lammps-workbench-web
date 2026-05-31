@@ -30,6 +30,39 @@
       <div><strong>3. 実行</strong><span>LAMMPS側で in.lammps を開く</span></div>
     </section>
 
+    <section class="panel examples-panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-kicker">操作例</p>
+          <h2>まずこの順番で試す</h2>
+        </div>
+      </div>
+      <div class="example-grid">
+        <article>
+          <h3>LJ fluidを作る</h3>
+          <ol>
+            <li><code>LJ fluid</code>カードを選ぶ</li>
+            <li>初期値のまま<code>生成</code></li>
+            <li><code>まとめてZIP</code>を保存</li>
+            <li>ZIPを作業フォルダに展開</li>
+            <li><code>lmp -in in.lammps</code>で実行</li>
+            <li><code>dump.demo.lammpstrj</code>をOVITOで開く</li>
+          </ol>
+        </article>
+        <article>
+          <h3>CG scaffoldを作る</h3>
+          <ol>
+            <li><code>CG scaffold</code>カードを選ぶ</li>
+            <li>bead数、chain数、pair係数を確認</li>
+            <li>Protocolのrun stepsやtimestepを確認</li>
+            <li><code>生成</code>してFilesへ進む</li>
+            <li>簡単に試すなら<code>in.lammps</code>を実行</li>
+            <li>配置/テンプレートを使うなら<code>packmol.inp</code>/<code>system.lt</code>を手動で使う</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
     <nav class="workbench-tabs" aria-label="Workbench steps">
       <button type="button" class="tab-button is-active" data-tab-target="builderView">Molecule Builder</button>
       <button type="button" class="tab-button" data-tab-target="protocolView">Protocol</button>
@@ -118,6 +151,10 @@
         </div>
         <p class="helper-text">ブラウザのダウンロード先に保存されたら、生成ファイルを同じ作業フォルダへ移動してください。LAMMPSはそのフォルダで <code>in.lammps</code> を実行します。</p>
         <div id="fileChecklist" class="file-checklist" aria-live="polite"></div>
+        <div class="file-use-note">
+          <strong>迷ったら</strong>
+          <span>まず <code>まとめてZIP</code> を保存して展開し、<code>in.lammps</code> だけをLAMMPSで実行してください。PACKMOL/MoltemplateはCG scaffoldを詳しく組み立てたい場合の追加下書きです。</span>
+        </div>
         <div class="actions">
           <button id="downloadCaseButton" type="button">case.jsonをDL</button>
           <button id="downloadInputButton" type="button">in.lammpsをDL</button>

@@ -230,6 +230,58 @@ code {
   color: #4a5568;
 }
 
+.examples-panel {
+  border-color: #c8d7e6;
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.example-grid article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fbfcfd;
+}
+
+.example-grid h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.example-grid ol {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.file-use-note {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 14px;
+  border: 1px solid #b9d9d0;
+  border-radius: 8px;
+  padding: 12px;
+  background: #ffffff;
+}
+
+.file-use-note strong {
+  color: var(--accent);
+}
+
+.file-use-note span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .command-label {
   display: block;
   margin-bottom: 6px;
@@ -473,6 +525,7 @@ textarea {
 @media (max-width: 760px) {
   .app-header,
   .output-grid,
+  .example-grid,
   .workspace,
   .mode-strip,
   .workbench-tabs,
