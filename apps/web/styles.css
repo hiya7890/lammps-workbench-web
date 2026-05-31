@@ -6,8 +6,10 @@
   --muted: #5d6978;
   --line: #d8dee8;
   --accent: #166a5b;
+  --accent-soft: #e7f3ef;
   --warn: #fff3d6;
   --warn-line: #dfb64c;
+  --ok: #0f766e;
 }
 
 * {
@@ -62,13 +64,14 @@ h2 {
 .layout {
   display: grid;
   gap: 18px;
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 24px;
 }
 
 .notice,
-.panel {
+.panel,
+.mode-strip {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
@@ -84,7 +87,79 @@ h2 {
   margin: 6px 0;
 }
 
+.mode-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.mode-strip div {
+  display: grid;
+  gap: 5px;
+  padding: 16px 18px;
+  background: #fbfcfd;
+}
+
+.mode-strip strong {
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.mode-strip span,
+.helper-text {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.panel-head h2 {
+  margin-bottom: 0;
+}
+
+.section-kicker {
+  margin: 0 0 4px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 .form-grid {
+  display: grid;
+  gap: 14px;
+}
+
+fieldset {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 0;
+  padding: 14px;
+}
+
+legend {
+  padding: 0 6px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.field-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 14px;
@@ -131,9 +206,17 @@ button {
   cursor: pointer;
 }
 
+.secondary-button,
 button + button {
   background: #ffffff;
   color: var(--accent);
+}
+
+.small-button {
+  padding: 6px 9px;
+  background: #ffffff;
+  color: var(--accent);
+  font-size: 12px;
 }
 
 .status {
@@ -159,13 +242,25 @@ textarea {
   line-height: 1.45;
 }
 
+.handoff-panel textarea {
+  min-height: 260px;
+  background: #fbfcfd;
+}
+
+.download-panel {
+  border-color: #b9d9d0;
+  background: var(--accent-soft);
+}
+
 .wide textarea {
   min-height: 180px;
 }
 
 @media (max-width: 760px) {
   .app-header,
-  .output-grid {
+  .output-grid,
+  .workspace,
+  .mode-strip {
     grid-template-columns: 1fr;
   }
 

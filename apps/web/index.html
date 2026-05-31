@@ -10,7 +10,7 @@
   <header class="app-header">
     <div>
       <p class="eyebrow">LAMMPS Workbench</p>
-      <h1>Web Safe Mode</h1>
+      <h1>Web Safe Input Builder</h1>
     </div>
     <span class="version" id="versionBadge">core</span>
   </header>
@@ -24,29 +24,76 @@
       <p>社内条件を扱う場合は、所属組織の情報管理ルールに従い、会社管理下のローカル版または社内版を使用してください。</p>
     </section>
 
-    <section class="panel">
-      <h2>Case</h2>
-      <div id="caseForm" class="form-grid"></div>
-      <div class="actions">
-        <button id="generateButton" type="button">生成</button>
-        <button id="downloadCaseButton" type="button">case.json</button>
-        <button id="downloadInputButton" type="button">in.lammps</button>
-        <button id="downloadProcedureButton" type="button">procedure.md</button>
+    <section class="mode-strip" aria-label="Web Safe Mode capabilities">
+      <div><strong>Input</strong><span>Local版と同じcore定義から条件を入力</span></div>
+      <div><strong>Preview</strong><span>case.json / in.lammps / procedure.md を画面で確認</span></div>
+      <div><strong>Handoff</strong><span>コピーまたはダウンロードして手動実行へ渡す</span></div>
+    </section>
+
+    <section class="workspace">
+      <section class="panel input-panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-kicker">Step 1</p>
+            <h2>条件入力</h2>
+          </div>
+          <button id="resetButton" type="button" class="secondary-button">初期値に戻す</button>
+        </div>
+        <div id="caseForm" class="form-grid"></div>
+        <div class="actions">
+          <button id="generateButton" type="button">生成</button>
+          <button id="copyInputButton" type="button" class="secondary-button">in.lammpsをコピー</button>
+          <button id="copyHandoffButton" type="button" class="secondary-button">受け渡し文をコピー</button>
+        </div>
+        <p id="status" class="status">未生成</p>
+      </section>
+
+      <section class="panel handoff-panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-kicker">Step 2</p>
+            <h2>手動実行への受け渡し</h2>
+          </div>
+        </div>
+        <p class="helper-text">この文章を社内の実行環境、LAMMPS GUI、またはLocal版へ貼り付けるためのメモとして使えます。</p>
+        <textarea id="handoffOutput" spellcheck="false"></textarea>
+      </section>
+    </section>
+
+    <section class="download-panel panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-kicker">Step 3</p>
+          <h2>ファイル保存</h2>
+        </div>
       </div>
-      <p id="status" class="status">未生成</p>
+      <div class="actions">
+        <button id="downloadCaseButton" type="button">case.jsonをDL</button>
+        <button id="downloadInputButton" type="button">in.lammpsをDL</button>
+        <button id="downloadProcedureButton" type="button">procedure.mdをDL</button>
+      </div>
     </section>
 
     <section class="output-grid">
       <div class="panel">
-        <h2>case.json</h2>
+        <div class="panel-head">
+          <h2>case.json</h2>
+          <button id="copyCaseButton" type="button" class="small-button">コピー</button>
+        </div>
         <textarea id="caseOutput" spellcheck="false"></textarea>
       </div>
       <div class="panel">
-        <h2>in.lammps</h2>
+        <div class="panel-head">
+          <h2>in.lammps</h2>
+          <button id="copyInputFromPanelButton" type="button" class="small-button">コピー</button>
+        </div>
         <textarea id="inputOutput" spellcheck="false"></textarea>
       </div>
       <div class="panel wide">
-        <h2>procedure.md</h2>
+        <div class="panel-head">
+          <h2>procedure.md</h2>
+          <button id="copyProcedureButton" type="button" class="small-button">コピー</button>
+        </div>
         <textarea id="procedureOutput" spellcheck="false"></textarea>
       </div>
     </section>
