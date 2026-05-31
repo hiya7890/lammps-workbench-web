@@ -152,7 +152,7 @@ Keep in Web Safe Mode:
 
 Exclude from Web Safe Mode:
 
-- `cg_scaffold` local-only case selection
+- `cg_scaffold` execution, local file writes, and local service routes
 - LAMMPS execution
 - Python or shell execution
 - file upload

@@ -77,7 +77,7 @@ The current shared case definitions include:
 - `interface_demo`
 - `cg_scaffold`
 
-The first four are public-safe cases available in Web Safe Mode. `cg_scaffold` is currently local-only and must not appear in Web Safe Mode case selection.
+The first four are public-safe demo cases. `cg_scaffold` is also available in Web Safe Mode as a file generator only, so users can prepare a simple CG molecule/protocol scaffold without installing Node.js. Web Safe Mode still does not run LAMMPS, PACKMOL, Moltemplate, Python, or OVITO.
 
 ## CG Scaffold Core Fields
 
@@ -98,7 +98,7 @@ The representative `cg_scaffold` path now reads these fields from `core/caseDefi
 - `deformAxis`
 - `deformRate`
 
-`services/cgScaffoldBuilder.js` uses shared defaults for the representative local-only scaffold path. Local GUI payload assembly builds a `cg_scaffold` case for this path before sending it to local routes.
+`services/cgScaffoldBuilder.js` uses shared defaults for the representative local scaffold path. Local GUI payload assembly builds a `cg_scaffold` case for this path before sending it to local routes. Web Safe Mode uses the same core definition to generate a self-contained handoff `in.lammps` for manual local execution.
 
 ## Fixed Regression Paths
 
@@ -106,14 +106,14 @@ The representative `cg_scaffold` path now reads these fields from `core/caseDefi
 
 - every core case definition must declare explicit `modes`
 - Web Safe UI may expose only cases whose `modes` include `web_safe`
-- `cg_scaffold` must remain `local_gui` / `local_runner` only
+- `cg_scaffold` must remain generation-only in Web Safe Mode and execution-capable only in Local GUI / Local Runner
 - default `cg_scaffold` case
 - deformation with `deformAxis` / `deformRate`
 - `pairStyle` / `pairCoeff` override
 - `runSteps` / `thermo` / `timestep` override
 - `beadCount` / `chainCount` / `repeatCountPerChain` override
 - validation error case from core field metadata
-- Web Safe Mode exclusion for `cg_scaffold`
+- Web Safe Mode inclusion for `cg_scaffold` as a file generator only
 - Local GUI startup normalization from core defaults
 - Local GUI static CG scaffold values are either equal to core defaults or explicitly covered by legacy normalization
 - `web_safe_common_core_status.md` is included in public build and distribution allowlists
@@ -187,7 +187,7 @@ Do not add any of the following to Web Safe Mode:
 - dump or trajectory analysis
 - result folder analysis
 - image or video result analysis
-- Local GUI-only `cg_scaffold` case selection
+- execution-capable `cg_scaffold` workflows
 
 If a future feature needs any of these capabilities, it belongs in Local Runner Mode, Local GUI, or another explicitly approved local / internal deployment, not the public static Web app.
 

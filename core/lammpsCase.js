@@ -154,6 +154,9 @@
       throw new Error(validation.errors.join(" "));
     }
     const current = validation.case;
+    if (current.caseType === "cg_scaffold") {
+      return generateCgScaffoldInput(current);
+    }
     const lines = [
       `# LAMMPS Workbench ${VERSION}`,
       `# ${current.title}`,
@@ -192,6 +195,56 @@
     }
     if (current.caseType === "interface_demo") {
       lines.splice(2, 0, "# Public demo placeholder: define generic wall or slab geometry in approved local workflows.");
+    }
+    return `${lines.join("\n")}\n`;
+  }
+
+  function generateCgScaffoldInput(current) {
+    const beadCount = Math.max(1, Math.floor(toNumber(current.beadCount, fieldFallbackValue("cg_scaffold", "beadCount", 32))));
+    const chainCount = Math.max(1, Math.floor(toNumber(current.chainCount, fieldFallbackValue("cg_scaffold", "chainCount", 4))));
+    const repeatCountPerChain = Math.max(1, Math.floor(toNumber(current.repeatCountPerChain, fieldFallbackValue("cg_scaffold", "repeatCountPerChain", 8))));
+    const density = Math.max(0.001, toNumber(current.density, 0.75));
+    const boxLength = Math.max(8, Math.cbrt(beadCount / density));
+    const deformAxis = String(current.deformAxis || "none").toLowerCase();
+    const deformRate = toNumber(current.deformRate, 0);
+    const lines = [
+      `# LAMMPS Workbench ${VERSION}`,
+      `# ${current.title}`,
+      "# Web Safe CG scaffold: generated input only. Run manually in an approved local environment.",
+      `# chains = ${chainCount}, repeat units per chain = ${repeatCountPerChain}, beads = ${beadCount}`,
+      "",
+      `units ${current.units}`,
+      `atom_style ${current.atomStyle}`,
+      "boundary p p p",
+      "",
+      `region simbox block 0 ${formatNumber(boxLength)} 0 ${formatNumber(boxLength)} 0 ${formatNumber(boxLength)}`,
+      "create_box 1 simbox",
+      `create_atoms 1 random ${beadCount} ${current.seed || DEFAULTS.seed} simbox`,
+      "",
+      "mass 1 1.0",
+      `pair_style ${current.pairStyle}`,
+      `pair_coeff ${current.pairCoeff}`,
+      "",
+      `velocity all create ${formatNumber(current.temperature)} ${current.seed || DEFAULTS.seed} mom yes rot no dist gaussian`,
+      `fix 1 all nvt temp ${formatNumber(current.temperature)} ${formatNumber(current.temperature)} 1.0`
+    ];
+    if (["x", "y", "z"].includes(deformAxis) && Math.abs(deformRate) > 0) {
+      lines.push("# Deformation scaffold. Confirm suitability before production use.");
+      lines.push(`fix DEF all deform 1 ${deformAxis} erate ${formatNumber(deformRate)} remap x units box`);
+    }
+    lines.push(
+      `timestep ${formatNumber(current.timestep)}`,
+      `thermo ${current.thermo}`,
+      "thermo_style custom step temp press etotal pe ke density",
+      `dump CG all custom ${current.thermo} dump.demo.lammpstrj id type x y z`,
+      "",
+      `run ${Math.floor(toNumber(current.runSteps, 5000))}`,
+      "",
+      "undump CG",
+      "unfix 1"
+    );
+    if (["x", "y", "z"].includes(deformAxis) && Math.abs(deformRate) > 0) {
+      lines.push("unfix DEF");
     }
     return `${lines.join("\n")}\n`;
   }

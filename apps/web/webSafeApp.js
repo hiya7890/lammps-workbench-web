@@ -99,7 +99,10 @@
   function sectionLabel(sectionKey) {
     return {
       case: "Case",
+      molecule: "Molecule build",
+      potential: "Force field",
       simulation: "Simulation",
+      protocol: "Protocol",
       output: "Output"
     }[sectionKey] || sectionKey;
   }
