@@ -219,8 +219,20 @@
     generate();
   }
 
+  function showTab(targetId) {
+    document.querySelectorAll(".tab-view").forEach((view) => {
+      view.classList.toggle("is-active", view.id === targetId);
+    });
+    document.querySelectorAll("[data-tab-target]").forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.tabTarget === targetId);
+    });
+  }
+
   document.querySelector("#generateButton").addEventListener("click", generate);
   document.querySelector("#resetButton").addEventListener("click", resetToDefaults);
+  document.querySelectorAll("[data-tab-target]").forEach((button) => {
+    button.addEventListener("click", () => showTab(button.dataset.tabTarget));
+  });
   document.querySelector("#copyCaseButton").addEventListener("click", () => copyText(outputs.caseJson.value, "case.json"));
   document.querySelector("#copyInputButton").addEventListener("click", () => copyText(outputs.input.value, "in.lammps"));
   document.querySelector("#copyInputFromPanelButton").addEventListener("click", () => copyText(outputs.input.value, "in.lammps"));

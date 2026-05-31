@@ -114,6 +114,34 @@ h2 {
   line-height: 1.45;
 }
 
+.workbench-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tab-button {
+  border-color: var(--line);
+  background: #ffffff;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.tab-button.is-active {
+  border-color: #135c4f;
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.tab-view {
+  display: none;
+}
+
+.tab-view.is-active {
+  display: grid;
+  gap: 18px;
+}
+
 .quickstart-panel {
   border-color: #b9d9d0;
 }
@@ -323,6 +351,7 @@ textarea {
   .output-grid,
   .workspace,
   .mode-strip,
+  .workbench-tabs,
   .command-card {
     grid-template-columns: 1fr;
   }

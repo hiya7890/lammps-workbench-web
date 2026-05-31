@@ -30,10 +30,36 @@
       <div><strong>3. 実行</strong><span>LAMMPS側で in.lammps を開く</span></div>
     </section>
 
-    <section class="panel quickstart-panel">
+    <nav class="workbench-tabs" aria-label="Workbench steps">
+      <button type="button" class="tab-button is-active" data-tab-target="builderView">Molecule Builder</button>
+      <button type="button" class="tab-button" data-tab-target="protocolView">Protocol</button>
+      <button type="button" class="tab-button" data-tab-target="filesView">Files</button>
+    </nav>
+
+    <section id="builderView" class="tab-view is-active">
+      <section class="panel input-panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-kicker">Molecule Builder</p>
+            <h2>条件入力</h2>
+          </div>
+          <button id="resetButton" type="button" class="secondary-button">初期値に戻す</button>
+        </div>
+        <p class="helper-text">まず case type を選びます。CG scaffoldでは分子数、鎖長、pair係数などを同じ画面で入力できます。</p>
+        <div id="caseForm" class="form-grid"></div>
+        <div class="actions">
+          <button id="generateButton" type="button">生成</button>
+          <button type="button" class="secondary-button" data-tab-target="protocolView">Protocolへ進む</button>
+        </div>
+        <p id="status" class="status">未生成</p>
+      </section>
+    </section>
+
+    <section id="protocolView" class="tab-view">
+      <section class="panel quickstart-panel">
       <div class="panel-head">
         <div>
-          <p class="section-kicker">最短手順</p>
+          <p class="section-kicker">Protocol</p>
           <h2>どこに何を置いて、どう実行するか</h2>
         </div>
       </div>
@@ -51,56 +77,47 @@
         </div>
         <button id="copyRunCommandButton" type="button" class="secondary-button">コマンドをコピー</button>
       </div>
+      <div class="actions">
+        <button type="button" class="secondary-button" data-tab-target="builderView">入力へ戻る</button>
+        <button type="button" data-tab-target="filesView">Filesへ進む</button>
+      </div>
+      </section>
     </section>
 
-    <section class="workspace">
-      <section class="panel input-panel">
-        <div class="panel-head">
-          <div>
-            <p class="section-kicker">Step 1</p>
-            <h2>条件入力</h2>
+    <section id="filesView" class="tab-view">
+      <section class="workspace">
+        <section class="panel handoff-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-kicker">Files</p>
+              <h2>実行環境へ渡す内容</h2>
+            </div>
           </div>
-          <button id="resetButton" type="button" class="secondary-button">初期値に戻す</button>
-        </div>
-        <div id="caseForm" class="form-grid"></div>
-        <div class="actions">
-          <button id="generateButton" type="button">生成</button>
+          <p class="helper-text">このメモは、どのファイルをどこへ置くか、実行後に何を見るかをまとめたものです。</p>
+          <textarea id="handoffOutput" spellcheck="false"></textarea>
           <button id="copyInputButton" type="button" class="secondary-button">in.lammpsをコピー</button>
           <button id="copyHandoffButton" type="button" class="secondary-button">受け渡し文をコピー</button>
-        </div>
-        <p id="status" class="status">未生成</p>
-      </section>
+        </section>
 
-      <section class="panel handoff-panel">
+        <section class="download-panel panel">
         <div class="panel-head">
           <div>
-            <p class="section-kicker">保存メモ</p>
-            <h2>実行環境へ渡す内容</h2>
+            <p class="section-kicker">Download</p>
+            <h2>同じ作業フォルダに保存するファイル</h2>
           </div>
         </div>
-        <p class="helper-text">このメモは、どのファイルをどこへ置くか、実行後に何を見るかをまとめたものです。</p>
-        <textarea id="handoffOutput" spellcheck="false"></textarea>
-      </section>
-    </section>
-
-    <section class="download-panel panel">
-      <div class="panel-head">
-        <div>
-          <p class="section-kicker">ダウンロード</p>
-          <h2>同じ作業フォルダに保存するファイル</h2>
+        <p class="helper-text">ブラウザのダウンロード先に保存されたら、生成ファイルを同じ作業フォルダへ移動してください。LAMMPSはそのフォルダで <code>in.lammps</code> を実行します。</p>
+        <div class="actions">
+          <button id="downloadCaseButton" type="button">case.jsonをDL</button>
+          <button id="downloadInputButton" type="button">in.lammpsをDL</button>
+          <button id="downloadPackmolButton" type="button">packmol.inpをDL</button>
+          <button id="downloadMoltemplateButton" type="button">system.ltをDL</button>
+          <button id="downloadProcedureButton" type="button">procedure.mdをDL</button>
         </div>
-      </div>
-      <p class="helper-text">ブラウザのダウンロード先に保存されたら、生成ファイルを同じ作業フォルダへ移動してください。LAMMPSはそのフォルダで <code>in.lammps</code> を実行します。</p>
-      <div class="actions">
-        <button id="downloadCaseButton" type="button">case.jsonをDL</button>
-        <button id="downloadInputButton" type="button">in.lammpsをDL</button>
-        <button id="downloadPackmolButton" type="button">packmol.inpをDL</button>
-        <button id="downloadMoltemplateButton" type="button">system.ltをDL</button>
-        <button id="downloadProcedureButton" type="button">procedure.mdをDL</button>
-      </div>
-    </section>
+        </section>
+      </section>
 
-    <section class="output-grid">
+      <section class="output-grid">
       <div class="panel">
         <div class="panel-head">
           <h2>case.json</h2>
@@ -136,6 +153,7 @@
         </div>
         <textarea id="moltemplateOutput" spellcheck="false"></textarea>
       </div>
+      </section>
     </section>
   </main>
 
