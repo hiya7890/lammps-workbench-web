@@ -5,6 +5,7 @@
   const presetSelect = document.querySelector("#presetSelect");
   const caseSummary = document.querySelector("#caseSummary");
   const fileChecklist = document.querySelector("#fileChecklist");
+  const toolGuide = document.querySelector("#toolGuide");
   const outputs = {
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
@@ -192,6 +193,7 @@
     outputs.runCommand.textContent = buildRunCommandText(currentRunFolder(caseDefinition));
     renderCaseSummary(caseDefinition);
     renderFileChecklist(caseDefinition);
+    renderToolGuide(caseDefinition);
     outputs.status.textContent = validation.ok ? "生成しました。コピーまたはダウンロードできます。" : validation.errors.join(" ");
   }
 
@@ -242,6 +244,30 @@
     }));
   }
 
+  function renderToolGuide(caseDefinition) {
+    const current = core.serializeCase(caseDefinition);
+    const tools = [
+      ["LAMMPS", "必須", "in.lammps を実行します"],
+      ["OVITO", "任意", "dump.demo.lammpstrj を可視化します"]
+    ];
+    if (current.caseType === "cg_scaffold") {
+      tools.splice(1, 0, ["PACKMOL", "任意", "packmol.inp から初期配置PDBを作る場合に使います"]);
+      tools.splice(2, 0, ["Moltemplate", "任意", "system.lt からdata/inputを作る場合に使います"]);
+    }
+    toolGuide.replaceChildren(...tools.map(([name, badge, description]) => {
+      const item = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = name;
+      const mark = document.createElement("span");
+      mark.textContent = badge;
+      mark.className = badge === "必須" ? "tool-required" : "tool-optional";
+      const text = document.createElement("small");
+      text.textContent = description;
+      item.append(title, mark, text);
+      return item;
+    }));
+  }
+
   function currentRunFolder(caseDefinition) {
     const current = core.serializeCase(caseDefinition);
     const safeName = String(current.caseType || "case").replace(/[^a-z0-9_-]+/gi, "-").toLowerCase();
@@ -270,6 +296,14 @@
       ``
     ];
     if (validation.ok) {
+      lines.push(`必要なツール`);
+      lines.push(`- LAMMPS: 必須`);
+      if (current.caseType === "cg_scaffold") {
+        lines.push(`- PACKMOL: 任意。packmol.inpを使う場合`);
+        lines.push(`- Moltemplate: 任意。system.ltを使う場合`);
+      }
+      lines.push(`- OVITO: 任意。dump.demo.lammpstrjを見る場合`);
+      lines.push(``);
       lines.push(`4. 実行後に確認するファイル`);
       lines.push(`log.lammps`);
       lines.push(`dump.demo.lammpstrj`);

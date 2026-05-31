@@ -188,6 +188,48 @@ code {
   background: #fbfcfd;
 }
 
+.tool-guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.tool-guide div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 5px 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.tool-guide small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.tool-required,
+.tool-optional {
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tool-required {
+  background: #e7f3ef;
+  color: #0f5d50;
+}
+
+.tool-optional {
+  background: #eef2f7;
+  color: #4a5568;
+}
+
 .command-label {
   display: block;
   margin-bottom: 6px;
