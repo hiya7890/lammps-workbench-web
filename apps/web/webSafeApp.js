@@ -10,6 +10,7 @@
   const validationPanel = document.querySelector("#validationPanel");
   const folderPlan = document.querySelector("#folderPlan");
   const fileFolderPlan = document.querySelector("#fileFolderPlan");
+  const routeGuide = document.querySelector("#routeGuide");
   const outputs = {
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
@@ -201,6 +202,7 @@
     renderFileChecklist(caseDefinition);
     renderToolGuide(caseDefinition);
     renderFolderPlan(caseDefinition);
+    renderRouteGuide(caseDefinition);
     renderProcedureModeButtons();
     renderValidation(validation);
     outputs.status.textContent = validation.ok ? "生成しました。コピーまたはダウンロードできます。" : validation.errors.join(" ");
@@ -324,6 +326,72 @@
     document.querySelectorAll("[data-procedure-mode]").forEach((button) => {
       button.classList.toggle("is-active", button.dataset.procedureMode === state.procedureMode);
     });
+  }
+
+  function renderRouteGuide(caseDefinition) {
+    const current = core.serializeCase(caseDefinition);
+    const routes = [
+      {
+        title: "コマンドライン",
+        badge: "最短",
+        steps: [
+          "ZIPを作業フォルダへ展開",
+          "PowerShellで作業フォルダへ移動",
+          "lmp -in in.lammps を実行"
+        ]
+      },
+      {
+        title: "LAMMPS GUI",
+        badge: "手動確認",
+        steps: [
+          "GUI側で作業フォルダを開く",
+          "in.lammps を入力ファイルとして開く",
+          "GUIの実行/確認機能で進める"
+        ]
+      },
+      {
+        title: "OVITO",
+        badge: "可視化",
+        steps: [
+          "LAMMPS実行後に作成されたdumpを使う",
+          "OVITOで dump.demo.lammpstrj を開く",
+          "粒子配置や軌跡を確認する"
+        ]
+      }
+    ];
+    if (current.caseType === "cg_scaffold") {
+      routes.splice(1, 0, {
+        title: "PACKMOL / Moltemplate",
+        badge: "任意",
+        steps: [
+          "packmol.inp と system.lt は下書きとして保存",
+          "より詳細な初期配置やLT変換が必要な時だけ使う",
+          "最初の動作確認は in.lammps 単体でよい"
+        ]
+      });
+    }
+    const heading = document.createElement("strong");
+    heading.textContent = "実行環境への渡し方";
+    const grid = document.createElement("div");
+    grid.className = "route-grid";
+    routes.forEach((route) => {
+      const card = document.createElement("article");
+      const top = document.createElement("div");
+      const title = document.createElement("h3");
+      title.textContent = route.title;
+      const badge = document.createElement("span");
+      badge.textContent = route.badge;
+      top.append(title, badge);
+      const list = document.createElement("ol");
+      route.steps.forEach((step) => {
+        const item = document.createElement("li");
+        item.textContent = step;
+        list.appendChild(item);
+      });
+      card.append(top, list);
+      grid.appendChild(card);
+    });
+    routeGuide.replaceChildren(heading, grid);
   }
 
   function renderMoleculePreview(caseDefinition) {
@@ -504,6 +572,11 @@
     lines.push(`## 4. 確認`);
     lines.push(`- log.lammps: LAMMPSログ`);
     lines.push(`- dump.demo.lammpstrj: OVITOで開く可視化用dump`);
+    lines.push(``);
+    lines.push(`## 5. LAMMPS GUIを使う場合`);
+    lines.push(`- 作業フォルダをGUI側で開く`);
+    lines.push(`- in.lammps を入力ファイルとして開く`);
+    lines.push(`- 実行後のdumpはOVITOで確認する`);
     if (!validation.ok) {
       lines.push(``);
       lines.push(`## 入力エラー`);
