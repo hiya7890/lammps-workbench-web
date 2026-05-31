@@ -104,6 +104,9 @@ The representative `cg_scaffold` path now reads these fields from `core/caseDefi
 
 `scripts/test-mode-split.js` fixes these representative paths:
 
+- every core case definition must declare explicit `modes`
+- Web Safe UI may expose only cases whose `modes` include `web_safe`
+- `cg_scaffold` must remain `local_gui` / `local_runner` only
 - default `cg_scaffold` case
 - deformation with `deformAxis` / `deformRate`
 - `pairStyle` / `pairCoeff` override
@@ -112,10 +115,42 @@ The representative `cg_scaffold` path now reads these fields from `core/caseDefi
 - validation error case from core field metadata
 - Web Safe Mode exclusion for `cg_scaffold`
 - Local GUI startup normalization from core defaults
+- Local GUI static CG scaffold values are either equal to core defaults or explicitly covered by legacy normalization
+- `web_safe_common_core_status.md` is included in public build and distribution allowlists
 - Web Safe Mode forbidden-capability audit
 - shared Web / Local generation equality for representative public cases
 
 These tests are the first line of defense against accidentally forking Web and Local definitions again.
+
+## Public Audit Coverage
+
+`npm run audit:public` checks source and, when present, the built `dist/pages` artifact for public hygiene.
+
+The audit rejects public artifact contamination by:
+
+- `server.js`
+- `runners/`
+- `routes/`
+- `services/`
+- `python/`
+- local output folders and result artifacts
+- `.env`
+- LAMMPS dump/log media and generated binary media paths
+
+For Web code files, the audit also rejects direct unsafe capabilities:
+
+- `child_process`
+- process spawning and command execution APIs
+- filesystem write APIs
+- `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, and beacon-style external communication
+- file input / upload primitives
+- Python command execution patterns
+- LAMMPS executable command patterns
+- MPI launcher patterns
+- shell execution wording in code
+- log/dump/trajectory analysis UI wording in code
+
+The audit intentionally does not ban LAMMPS input text such as generated `dump` commands in `core/lammpsCase.js`; Web Safe Mode is allowed to generate input files, but not to execute or analyze them.
 
 ## Remaining Duplication
 
@@ -166,4 +201,3 @@ npm run test:mode-split
 npm run audit:public
 npm run build:web-public
 ```
-
