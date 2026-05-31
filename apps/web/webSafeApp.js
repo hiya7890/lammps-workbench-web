@@ -11,6 +11,7 @@
   const folderPlan = document.querySelector("#folderPlan");
   const fileFolderPlan = document.querySelector("#fileFolderPlan");
   const routeGuide = document.querySelector("#routeGuide");
+  const readinessChecklist = document.querySelector("#readinessChecklist");
   const outputs = {
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
@@ -203,6 +204,7 @@
     renderToolGuide(caseDefinition);
     renderFolderPlan(caseDefinition);
     renderRouteGuide(caseDefinition);
+    renderReadinessChecklist(caseDefinition, validation);
     renderProcedureModeButtons();
     renderValidation(validation);
     outputs.status.textContent = validation.ok ? "生成しました。コピーまたはダウンロードできます。" : validation.errors.join(" ");
@@ -394,6 +396,39 @@
     routeGuide.replaceChildren(heading, grid);
   }
 
+  function renderReadinessChecklist(caseDefinition, validation) {
+    const current = core.serializeCase(caseDefinition);
+    const checks = [
+      ["Web生成", validation.ok ? "OK" : "要修正", validation.ok ? "case.json / in.lammps / procedure.md を生成済み" : "入力エラーを直してから保存"],
+      ["作業フォルダ", "手動", `${currentRunFolder(caseDefinition)} を会社PC側で作成`],
+      ["LAMMPS", "必須", "lmp コマンドまたはLAMMPS GUIで in.lammps を開けること"],
+      ["OVITO", "任意", "実行後の dump.demo.lammpstrj を可視化する場合に使用"]
+    ];
+    if (current.caseType === "cg_scaffold") {
+      checks.splice(3, 0, ["PACKMOL", "任意", "packmol.inp を使って初期配置を作る場合だけ必要"]);
+      checks.splice(4, 0, ["Moltemplate", "任意", "system.lt をLT変換の下書きとして使う場合だけ必要"]);
+    }
+    const title = document.createElement("strong");
+    title.textContent = "会社PCへ持っていく前の確認";
+    const list = document.createElement("div");
+    list.className = "readiness-grid";
+    checks.forEach(([name, status, description]) => {
+      const item = document.createElement("div");
+      const top = document.createElement("span");
+      const label = document.createElement("strong");
+      label.textContent = name;
+      const badge = document.createElement("em");
+      badge.textContent = status;
+      badge.className = status === "OK" ? "badge-ok" : status === "要修正" ? "badge-error" : "badge-neutral";
+      top.append(label, badge);
+      const text = document.createElement("small");
+      text.textContent = description;
+      item.append(top, text);
+      list.appendChild(item);
+    });
+    readinessChecklist.replaceChildren(title, list);
+  }
+
   function renderMoleculePreview(caseDefinition) {
     const current = core.serializeCase(caseDefinition);
     moleculePreview.replaceChildren();
@@ -577,6 +612,14 @@
     lines.push(`- 作業フォルダをGUI側で開く`);
     lines.push(`- in.lammps を入力ファイルとして開く`);
     lines.push(`- 実行後のdumpはOVITOで確認する`);
+    lines.push(``);
+    lines.push(`## 6. 事前確認`);
+    lines.push(`- Web版ではLAMMPS実行、ファイル送信、外部保存、外部API通信は行わない`);
+    lines.push(`- 社内条件や顧客情報は入力しない`);
+    lines.push(`- 会社PC側でLAMMPSのパスまたはLAMMPS GUIを確認する`);
+    if (current.caseType === "cg_scaffold") {
+      lines.push(`- PACKMOL/Moltemplateは詳細な初期配置・LT変換を使う場合だけ確認する`);
+    }
     if (!validation.ok) {
       lines.push(``);
       lines.push(`## 入力エラー`);
