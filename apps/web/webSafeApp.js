@@ -188,7 +188,8 @@
     const files = [
       ["case.json", "条件の保存・再現用"],
       ["in.lammps", "LAMMPSで実行する入力"],
-      ["procedure.md", "実行手順メモ"]
+      ["procedure.md", "実行手順メモ"],
+      ["README_run.md", "作業フォルダと実行コマンドのメモ"]
     ];
     if (current.caseType === "cg_scaffold") {
       files.push(["packmol.inp", "PACKMOL配置の下書き"]);
@@ -259,6 +260,114 @@
     URL.revokeObjectURL(url);
   }
 
+  function generatedFiles() {
+    const caseDefinition = buildCaseFromForm();
+    const current = core.serializeCase(caseDefinition);
+    const files = [
+      ["case.json", outputs.caseJson.value],
+      ["in.lammps", outputs.input.value],
+      ["procedure.md", outputs.procedure.value],
+      ["README_run.md", outputs.handoff.value]
+    ];
+    if (current.caseType === "cg_scaffold") {
+      files.push(["packmol.inp", outputs.packmol.value]);
+      files.push(["system.lt", outputs.moltemplate.value]);
+    }
+    return files.filter(([, content]) => String(content || "").trim());
+  }
+
+  function crc32(bytes) {
+    let crc = -1;
+    for (let i = 0; i < bytes.length; i += 1) {
+      crc ^= bytes[i];
+      for (let bit = 0; bit < 8; bit += 1) {
+        crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+      }
+    }
+    return (crc ^ -1) >>> 0;
+  }
+
+  function writeUint16(buffer, value) {
+    buffer.push(value & 0xff, (value >>> 8) & 0xff);
+  }
+
+  function writeUint32(buffer, value) {
+    buffer.push(value & 0xff, (value >>> 8) & 0xff, (value >>> 16) & 0xff, (value >>> 24) & 0xff);
+  }
+
+  function createZip(files) {
+    const encoder = new TextEncoder();
+    const chunks = [];
+    const central = [];
+    let offset = 0;
+    files.forEach(([filename, content]) => {
+      const nameBytes = encoder.encode(filename);
+      const contentBytes = encoder.encode(content);
+      const crc = crc32(contentBytes);
+      const local = [];
+      writeUint32(local, 0x04034b50);
+      writeUint16(local, 20);
+      writeUint16(local, 0);
+      writeUint16(local, 0);
+      writeUint16(local, 0);
+      writeUint16(local, 0);
+      writeUint32(local, crc);
+      writeUint32(local, contentBytes.length);
+      writeUint32(local, contentBytes.length);
+      writeUint16(local, nameBytes.length);
+      writeUint16(local, 0);
+      chunks.push(new Uint8Array(local), nameBytes, contentBytes);
+
+      const header = [];
+      writeUint32(header, 0x02014b50);
+      writeUint16(header, 20);
+      writeUint16(header, 20);
+      writeUint16(header, 0);
+      writeUint16(header, 0);
+      writeUint16(header, 0);
+      writeUint16(header, 0);
+      writeUint32(header, crc);
+      writeUint32(header, contentBytes.length);
+      writeUint32(header, contentBytes.length);
+      writeUint16(header, nameBytes.length);
+      writeUint16(header, 0);
+      writeUint16(header, 0);
+      writeUint16(header, 0);
+      writeUint16(header, 0);
+      writeUint32(header, 0);
+      writeUint32(header, offset);
+      central.push(new Uint8Array(header), nameBytes);
+      offset += local.length + nameBytes.length + contentBytes.length;
+    });
+    const centralSize = central.reduce((sum, item) => sum + item.length, 0);
+    const end = [];
+    writeUint32(end, 0x06054b50);
+    writeUint16(end, 0);
+    writeUint16(end, 0);
+    writeUint16(end, files.length);
+    writeUint16(end, files.length);
+    writeUint32(end, centralSize);
+    writeUint32(end, offset);
+    writeUint16(end, 0);
+    return new Blob([...chunks, ...central, new Uint8Array(end)], { type: "application/zip" });
+  }
+
+  function downloadZip() {
+    const files = generatedFiles();
+    if (!files.length) {
+      outputs.status.textContent = "ZIPに入れるファイルがありません。先に生成してください。";
+      return;
+    }
+    const blob = createZip(files);
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${state.caseType || "lammps-case"}_web_safe_files.zip`;
+    link.click();
+    URL.revokeObjectURL(url);
+    outputs.status.textContent = "生成ファイルをZIPにまとめました。";
+  }
+
   async function copyText(text, label) {
     if (!text) {
       outputs.status.textContent = `${label} が空です。先に生成してください。`;
@@ -320,6 +429,7 @@
   document.querySelector("#downloadPackmolButton").addEventListener("click", () => downloadText("packmol.inp", outputs.packmol.value));
   document.querySelector("#downloadMoltemplateButton").addEventListener("click", () => downloadText("system.lt", outputs.moltemplate.value));
   document.querySelector("#downloadProcedureButton").addEventListener("click", () => downloadText("procedure.md", outputs.procedure.value));
+  document.querySelector("#downloadZipButton").addEventListener("click", downloadZip);
 
   renderForm(state.caseType, {});
   generate();
