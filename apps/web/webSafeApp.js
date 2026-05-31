@@ -6,6 +6,7 @@
     input: document.querySelector("#inputOutput"),
     procedure: document.querySelector("#procedureOutput"),
     handoff: document.querySelector("#handoffOutput"),
+    runCommand: document.querySelector("#runCommandOutput"),
     status: document.querySelector("#status")
   };
   const state = {
@@ -127,32 +128,50 @@
     outputs.input.value = validation.ok ? core.generateLammpsInput(caseDefinition) : "";
     outputs.procedure.value = core.generateProcedure(caseDefinition);
     outputs.handoff.value = buildHandoffText(caseDefinition, validation);
+    outputs.runCommand.textContent = buildRunCommandText(currentRunFolder(caseDefinition));
     outputs.status.textContent = validation.ok ? "生成しました。コピーまたはダウンロードできます。" : validation.errors.join(" ");
+  }
+
+  function currentRunFolder(caseDefinition) {
+    const current = core.serializeCase(caseDefinition);
+    const safeName = String(current.caseType || "case").replace(/[^a-z0-9_-]+/gi, "-").toLowerCase();
+    return `C:\\lammps-demo\\${safeName}`;
   }
 
   function buildHandoffText(caseDefinition, validation) {
     const current = core.serializeCase(caseDefinition);
+    const folder = currentRunFolder(caseDefinition);
     const lines = [
-      `LAMMPS Workbench Web Safe Mode handoff`,
+      `LAMMPS Workbench Web Safe Mode 受け渡しメモ`,
       ``,
-      `Case: ${current.title}`,
-      `Case type: ${current.caseType}`,
+      `1. 作業フォルダを作成`,
+      folder,
       ``,
-      `このWeb版は実行しません。以下の内容をファイルとして保存し、承認済みのLocal環境で手動実行してください。`,
+      `2. この3ファイルを同じフォルダへ保存`,
+      `case.json`,
+      `in.lammps`,
+      `procedure.md`,
       ``,
-      `保存するファイル:`,
-      `- case.json`,
-      `- in.lammps`,
-      `- procedure.md`,
-      ``,
-      validation.ok
-        ? `LAMMPS inputは生成済みです。下の in.lammps 欄をコピーするか、in.lammpsをDLしてください。`
-        : `入力値にエラーがあります: ${validation.errors.join(" ")}`,
-      ``,
-      `Manual command example:`,
-      `lmp -in in.lammps`
+      `3. LAMMPSで実行`,
+      `cd ${folder}`,
+      `lmp -in in.lammps`,
+      ``
     ];
+    if (validation.ok) {
+      lines.push(`4. 実行後に確認するファイル`);
+      lines.push(`log.lammps`);
+      lines.push(`dump.demo.lammpstrj`);
+      lines.push(``);
+      lines.push(`5. 可視化する場合`);
+      lines.push(`OVITOで dump.demo.lammpstrj を開く`);
+    } else {
+      lines.push(`入力値にエラーがあります: ${validation.errors.join(" ")}`);
+    }
     return `${lines.join("\n")}\n`;
+  }
+
+  function buildRunCommandText(folder) {
+    return `cd ${folder}\nlmp -in in.lammps`;
   }
 
   function downloadText(filename, text) {
@@ -198,6 +217,7 @@
   document.querySelector("#copyInputFromPanelButton").addEventListener("click", () => copyText(outputs.input.value, "in.lammps"));
   document.querySelector("#copyProcedureButton").addEventListener("click", () => copyText(outputs.procedure.value, "procedure.md"));
   document.querySelector("#copyHandoffButton").addEventListener("click", () => copyText(outputs.handoff.value, "受け渡し文"));
+  document.querySelector("#copyRunCommandButton").addEventListener("click", () => copyText(outputs.runCommand.textContent, "実行コマンド"));
   document.querySelector("#downloadCaseButton").addEventListener("click", () => downloadText("case.json", outputs.caseJson.value));
   document.querySelector("#downloadInputButton").addEventListener("click", () => downloadText("in.lammps", outputs.input.value));
   document.querySelector("#downloadProcedureButton").addEventListener("click", () => downloadText("procedure.md", outputs.procedure.value));

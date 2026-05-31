@@ -114,6 +114,68 @@ h2 {
   line-height: 1.45;
 }
 
+.quickstart-panel {
+  border-color: #b9d9d0;
+}
+
+.quickstart-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.quickstart-list li {
+  padding-left: 4px;
+}
+
+.quickstart-list strong {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.quickstart-list span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+code {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  background: #ffffff;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+}
+
+.command-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfcfd;
+}
+
+.command-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+pre {
+  margin: 0;
+  overflow-x: auto;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
@@ -260,7 +322,8 @@ textarea {
   .app-header,
   .output-grid,
   .workspace,
-  .mode-strip {
+  .mode-strip,
+  .command-card {
     grid-template-columns: 1fr;
   }
 

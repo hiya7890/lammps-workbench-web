@@ -24,10 +24,33 @@
       <p>社内条件を扱う場合は、所属組織の情報管理ルールに従い、会社管理下のローカル版または社内版を使用してください。</p>
     </section>
 
-    <section class="mode-strip" aria-label="Web Safe Mode capabilities">
-      <div><strong>Input</strong><span>Local版と同じcore定義から条件を入力</span></div>
-      <div><strong>Preview</strong><span>case.json / in.lammps / procedure.md を画面で確認</span></div>
-      <div><strong>Handoff</strong><span>コピーまたはダウンロードして手動実行へ渡す</span></div>
+    <section class="mode-strip" aria-label="Web Safe Mode workflow">
+      <div><strong>1. 入力</strong><span>条件を入れて生成を押す</span></div>
+      <div><strong>2. 保存</strong><span>3ファイルを同じ作業フォルダへ置く</span></div>
+      <div><strong>3. 実行</strong><span>LAMMPS側で in.lammps を開く</span></div>
+    </section>
+
+    <section class="panel quickstart-panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-kicker">最短手順</p>
+          <h2>どこに何を置いて、どう実行するか</h2>
+        </div>
+      </div>
+      <ol class="quickstart-list">
+        <li><strong>作業フォルダを作る</strong><span>例: <code>C:\lammps-demo\lj-fluid</code></span></li>
+        <li><strong>このWeb画面で生成する</strong><span>まずは初期値のまま <code>生成</code> を押す</span></li>
+        <li><strong>3ファイルを同じフォルダへ保存</strong><span><code>case.json</code>, <code>in.lammps</code>, <code>procedure.md</code></span></li>
+        <li><strong>LAMMPSで実行</strong><span>作業フォルダで <code>lmp -in in.lammps</code></span></li>
+        <li><strong>見たい場合</strong><span>生成された <code>dump.demo.lammpstrj</code> をOVITOで開く</span></li>
+      </ol>
+      <div class="command-card">
+        <div>
+          <span class="command-label">PowerShell例</span>
+          <pre id="runCommandOutput">cd C:\lammps-demo\lj-fluid&#10;lmp -in in.lammps</pre>
+        </div>
+        <button id="copyRunCommandButton" type="button" class="secondary-button">コマンドをコピー</button>
+      </div>
     </section>
 
     <section class="workspace">
@@ -51,11 +74,11 @@
       <section class="panel handoff-panel">
         <div class="panel-head">
           <div>
-            <p class="section-kicker">Step 2</p>
-            <h2>手動実行への受け渡し</h2>
+            <p class="section-kicker">保存メモ</p>
+            <h2>実行環境へ渡す内容</h2>
           </div>
         </div>
-        <p class="helper-text">この文章を社内の実行環境、LAMMPS GUI、またはLocal版へ貼り付けるためのメモとして使えます。</p>
+        <p class="helper-text">このメモは、どのファイルをどこへ置くか、実行後に何を見るかをまとめたものです。</p>
         <textarea id="handoffOutput" spellcheck="false"></textarea>
       </section>
     </section>
@@ -63,10 +86,11 @@
     <section class="download-panel panel">
       <div class="panel-head">
         <div>
-          <p class="section-kicker">Step 3</p>
-          <h2>ファイル保存</h2>
+          <p class="section-kicker">ダウンロード</p>
+          <h2>同じ作業フォルダに保存する3ファイル</h2>
         </div>
       </div>
+      <p class="helper-text">ブラウザのダウンロード先に保存されたら、3ファイルを同じ作業フォルダへ移動してください。LAMMPSはそのフォルダで <code>in.lammps</code> を実行します。</p>
       <div class="actions">
         <button id="downloadCaseButton" type="button">case.jsonをDL</button>
         <button id="downloadInputButton" type="button">in.lammpsをDL</button>
