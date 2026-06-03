@@ -56,6 +56,13 @@ h2 {
   background: #fbfcfd;
 }
 
+.hero-copy {
+  max-width: 62ch;
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 .layout {
   display: grid;
   gap: 18px;
@@ -111,7 +118,7 @@ h2 {
 
 .workbench-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -723,6 +730,14 @@ button {
   cursor: pointer;
 }
 
+button:disabled,
+input:disabled {
+  border-color: rgba(93, 102, 108, 0.28);
+  background: #eef0f2;
+  color: #7a838a;
+  cursor: not-allowed;
+}
+
 .secondary-button,
 button + button {
   background: #ffffff;
@@ -800,6 +815,53 @@ textarea {
 
 .wide textarea {
   min-height: 180px;
+}
+
+.locked-panel {
+  border-color: rgba(116, 66, 46, 0.22);
+  background: rgba(255, 252, 247, 0.9);
+}
+
+.locked-badge {
+  border: 1px solid rgba(116, 66, 46, 0.28);
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: rgba(244, 238, 230, 0.92);
+  color: #74422e;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.locked-action-grid,
+.settings-lock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.locked-action-grid button {
+  min-height: 44px;
+}
+
+.locked-note {
+  display: grid;
+  gap: 5px;
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #ffffff;
+}
+
+.locked-note strong {
+  color: var(--accent);
+}
+
+.locked-note span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 @media (max-width: 760px) {

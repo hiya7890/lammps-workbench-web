@@ -10,8 +10,9 @@
 <body>
   <header class="app-header">
     <div>
-      <p class="eyebrow">LAMMPS Workbench</p>
-      <h1>Web Safe Input Builder</h1>
+      <p class="eyebrow">LAMMPS Workbench Web Safe Mode</p>
+      <h1>LAMMPS Workbench</h1>
+      <p class="hero-copy">Local版と同じWorkbench導線を使い、公開Webでは実行・解析・外部ツール連携だけをロックします。</p>
     </div>
     <span class="version" id="versionBadge">core</span>
   </header>
@@ -64,10 +65,11 @@
       </div>
     </section>
 
-    <nav class="workbench-tabs" aria-label="Workbench steps">
-      <button type="button" class="tab-button is-active" data-tab-target="builderView">Molecule Builder</button>
-      <button type="button" class="tab-button" data-tab-target="protocolView">Protocol</button>
-      <button type="button" class="tab-button" data-tab-target="filesView">Files</button>
+    <nav class="workbench-tabs main-tabbar" aria-label="Workbench sections">
+      <button type="button" class="tab-button main-tab-button is-active" data-tab-target="builderView">モデル構築</button>
+      <button type="button" class="tab-button main-tab-button" data-tab-target="protocolView">プロトコル</button>
+      <button type="button" class="tab-button main-tab-button" data-tab-target="runView">実行・解析</button>
+      <button type="button" class="tab-button main-tab-button" data-tab-target="settingsView">設定</button>
     </nav>
 
     <section id="builderView" class="tab-view is-active">
@@ -101,7 +103,7 @@
         <div id="caseForm" class="form-grid"></div>
         <div class="actions">
           <button id="generateButton" type="button">生成</button>
-          <button type="button" class="secondary-button" data-tab-target="protocolView">Protocolへ進む</button>
+          <button type="button" class="secondary-button" data-tab-target="protocolView">プロトコルへ進む</button>
         </div>
         <p id="status" class="status">未生成</p>
         <div id="validationPanel" class="validation-panel is-hidden" aria-live="polite"></div>
@@ -141,12 +143,9 @@
       </div>
       <div class="actions">
         <button type="button" class="secondary-button" data-tab-target="builderView">入力へ戻る</button>
-        <button type="button" data-tab-target="filesView">Filesへ進む</button>
+        <button type="button" data-tab-target="runView">実行・解析へ進む</button>
       </div>
       </section>
-    </section>
-
-    <section id="filesView" class="tab-view">
       <section class="workspace">
         <section class="panel handoff-panel">
           <div class="panel-head">
@@ -222,6 +221,55 @@
         </div>
         <textarea id="moltemplateOutput" spellcheck="false"></textarea>
       </div>
+      </section>
+    </section>
+
+    <section id="runView" class="tab-view">
+      <section class="panel locked-panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-kicker">Run / Analysis</p>
+            <h2>実行・解析はLocal版専用です</h2>
+          </div>
+          <span class="locked-badge">Web Safeでは無効</span>
+        </div>
+        <p class="helper-text">Web版はLocal版の機能制限版です。実行・解析系の操作は見える状態にしていますが、公開Webではクリックできません。</p>
+        <div class="locked-action-grid">
+          <button type="button" disabled>LAMMPS 構文チェック</button>
+          <button type="button" disabled>LAMMPS を実行</button>
+          <button type="button" disabled>PACKMOL を実行</button>
+          <button type="button" disabled>Moltemplate を実行</button>
+          <button type="button" disabled>log.lammps を解析</button>
+          <button type="button" disabled>OVITOでdumpを開く</button>
+        </div>
+        <div class="locked-note">
+          <strong>Local版で有効になるもの</strong>
+          <span>外部ツールのパス設定、作業フォルダ作成、LAMMPS/PACKMOL/Moltemplate/Python/OVITO連携、結果フォルダ整理、log/dump/trajectory解析。</span>
+        </div>
+        <div class="actions">
+          <button type="button" class="secondary-button" data-tab-target="protocolView">プロトコルへ戻る</button>
+        </div>
+      </section>
+    </section>
+
+    <section id="settingsView" class="tab-view">
+      <section class="panel locked-panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-kicker">Settings</p>
+            <h2>外部ツール設定はLocal版専用です</h2>
+          </div>
+          <span class="locked-badge">Web Safeでは無効</span>
+        </div>
+        <p class="helper-text">Web版ではローカルPCの実行ファイルや保存先を読み書きしません。設定欄はLocal版で有効になる項目として表示だけ残します。</p>
+        <div class="settings-lock-grid">
+          <label><span>Windows LAMMPS</span><input type="text" value="Local版で設定" disabled></label>
+          <label><span>PACKMOL</span><input type="text" value="Local版で設定" disabled></label>
+          <label><span>Moltemplate</span><input type="text" value="Local版で設定" disabled></label>
+          <label><span>Python</span><input type="text" value="Local版で設定" disabled></label>
+          <label><span>OVITO</span><input type="text" value="Local版で設定" disabled></label>
+          <label><span>Project保存先</span><input type="text" value="Web版では保存しません" disabled></label>
+        </div>
       </section>
     </section>
   </main>
