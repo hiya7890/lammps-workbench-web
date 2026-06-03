@@ -172,6 +172,25 @@ Maintain a `cg_scaffold` field correspondence table as new scaffold fields are m
 
 Move AA / interface / adhesion field schema into core only after their public-safe and local-only boundaries are explicit. PACKMOL, Moltemplate, LAMMPS execution, Python workflows, and analysis must remain Local-only.
 
+## UI Commonization Policy
+
+Local GUI and Web Safe Mode should share the same visual foundation wherever possible. The current shared foundation is `shared/ui/workbench-shell.css`, loaded by both `public/index.html` and `apps/web/index.html`.
+
+Shared UI scope:
+
+- color, background, typography, panel, and button tokens
+- Workbench shell appearance
+- future shared Molecule Builder / Protocol / Files component styles
+
+Separated UI scope:
+
+- Web Safe notice, download/copy/ZIP controls, and execution-disabled guidance
+- Local runner controls, project save/load, browse buttons, and local filesystem access
+- LAMMPS/PACKMOL/Moltemplate/Python/OVITO integration controls
+- execution, log reading, dump handling, and analysis views
+
+When changing appearance that should apply to both Local and Web, update `shared/ui/workbench-shell.css` first. Use each entry-specific stylesheet only for mode-specific constraints or layout that cannot be shared safely.
+
 ## Web Safe Mode Prohibited Changes
 
 Do not add any of the following to Web Safe Mode:
