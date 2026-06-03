@@ -790,6 +790,10 @@ input:disabled {
   cursor: not-allowed;
 }
 
+.is-capability-locked {
+  opacity: 0.66;
+}
+
 .secondary-button,
 button + button {
   background: #ffffff;

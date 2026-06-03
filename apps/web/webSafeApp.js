@@ -1,6 +1,7 @@
 (function initWebSafeApp() {
   const core = window.LammpsCaseCore;
   const ui = window.WorkbenchUi;
+  const capabilities = window.WorkbenchCapabilities;
   const caseForm = document.querySelector("#caseForm");
   const workflowCards = document.querySelector("#workflowCards");
   const presetSelect = document.querySelector("#presetSelect");
@@ -826,4 +827,5 @@
 
   renderForm(state.caseType, {});
   generate();
+  capabilities.applyLocks("web_safe");
 })();

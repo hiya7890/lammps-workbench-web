@@ -47,6 +47,10 @@ Local Runner Mode and the existing Local GUI own local and execution features:
 
 Execution and analysis code must remain outside Web Safe Mode.
 
+Web Safe Mode should still show Local-style execution and settings controls when useful, but those controls must be disabled or visually locked. The lock should explain the reason and the manual alternative, for example running generated `in.lammps` on a local PC.
+
+Local GUI should expose a Prepare Only / Web-Compatible mode that applies the same capability restrictions as Web Safe Mode while still running inside the local app shell. Local Runner Mode is the explicit mode for approved execution and analysis.
+
 ## Common Core Structure
 
 The shared source of truth is centered on `core/`.
@@ -181,6 +185,7 @@ Shared UI scope:
 - color, background, typography, panel, and button tokens
 - Workbench shell appearance
 - tab activation, active-state toggles, and workflow-card primitives
+- capability-driven disabled / locked controls
 - future shared Molecule Builder / Protocol / Files component styles
 
 Separated UI scope:

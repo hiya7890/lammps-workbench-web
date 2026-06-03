@@ -252,12 +252,12 @@
         </div>
         <p class="helper-text">Web版はLocal版の機能制限版です。実行・解析系の操作は見える状態にしていますが、公開Webではクリックできません。</p>
         <div class="locked-action-grid">
-          <button type="button" disabled>LAMMPS 構文チェック</button>
-          <button type="button" disabled>LAMMPS を実行</button>
-          <button type="button" disabled>PACKMOL を実行</button>
-          <button type="button" disabled>Moltemplate を実行</button>
-          <button type="button" disabled>log.lammps を解析</button>
-          <button type="button" disabled>OVITOでdumpを開く</button>
+          <button type="button" data-capability="lammpsRun">LAMMPS 構文チェック</button>
+          <button type="button" data-capability="lammpsRun">LAMMPS を実行</button>
+          <button type="button" data-capability="packmolRun">PACKMOL を実行</button>
+          <button type="button" data-capability="moltemplateRun">Moltemplate を実行</button>
+          <button type="button" data-capability="resultAnalysis">log.lammps を解析</button>
+          <button type="button" data-capability="ovitoLaunch">OVITOでdumpを開く</button>
         </div>
         <div class="locked-note">
           <strong>Local版で有効になるもの</strong>
@@ -280,12 +280,12 @@
         </div>
         <p class="helper-text">Web版ではローカルPCの実行ファイルや保存先を読み書きしません。設定欄はLocal版で有効になる項目として表示だけ残します。</p>
         <div class="settings-lock-grid">
-          <label><span>Windows LAMMPS</span><input type="text" value="Local版で設定" disabled></label>
-          <label><span>PACKMOL</span><input type="text" value="Local版で設定" disabled></label>
-          <label><span>Moltemplate</span><input type="text" value="Local版で設定" disabled></label>
-          <label><span>Python</span><input type="text" value="Local版で設定" disabled></label>
-          <label><span>OVITO</span><input type="text" value="Local版で設定" disabled></label>
-          <label><span>Project保存先</span><input type="text" value="Web版では保存しません" disabled></label>
+          <label><span>Windows LAMMPS</span><input type="text" value="Local版で設定" data-capability="lammpsRun"></label>
+          <label><span>PACKMOL</span><input type="text" value="Local版で設定" data-capability="packmolRun"></label>
+          <label><span>Moltemplate</span><input type="text" value="Local版で設定" data-capability="moltemplateRun"></label>
+          <label><span>Python</span><input type="text" value="Local版で設定" data-capability="pythonRun"></label>
+          <label><span>OVITO</span><input type="text" value="Local版で設定" data-capability="ovitoLaunch"></label>
+          <label><span>Project保存先</span><input type="text" value="Web版では保存しません" data-capability="projectIo"></label>
         </div>
       </section>
     </section>
@@ -294,6 +294,7 @@
   <script src="../../core/caseDefinitions.js"></script>
   <script src="../../core/lammpsCase.js"></script>
   <script src="../../shared/ui/workbenchUi.js"></script>
+  <script src="../../shared/ui/workbenchCapabilities.js"></script>
   <script src="./webSafeApp.js"></script>
 </body>
 </html>
