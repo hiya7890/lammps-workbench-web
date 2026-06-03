@@ -26,6 +26,23 @@
       <p>社内条件を扱う場合は、所属組織の情報管理ルールに従い、会社管理下のローカル版または社内版を使用してください。</p>
     </section>
 
+    <section class="panel workflow-dashboard">
+      <div class="workflow-top">
+        <label class="project-inline">
+          <span>プロジェクト</span>
+          <input type="text" value="web-safe-demo" disabled>
+        </label>
+        <div class="mode-toggle" role="tablist" aria-label="Project workspace selector">
+          <button type="button" class="mode-button is-active" data-workspace-mode="cg">Coarse-Grained Polymer</button>
+          <button type="button" class="mode-button is-locked" data-workspace-mode="aa" aria-disabled="true">Atomistic / All-Atom</button>
+          <button type="button" class="mode-button is-locked" data-workspace-mode="hybrid" aria-disabled="true">Hybrid / Multiscale</button>
+        </div>
+      </div>
+      <div id="workspaceModeNotice" class="workspace-mode-notice" aria-live="polite">
+        Web Safe Modeでは、現在CG系の公開デモ生成だけを有効にしています。AA/HybridはLocal版で有効化する機能として表示のみ残しています。
+      </div>
+    </section>
+
     <section class="mode-strip" aria-label="Web Safe Mode workflow">
       <div><strong>1. 入力</strong><span>Case / Molecule / Protocol を入力</span></div>
       <div><strong>2. 保存</strong><span>生成ファイルを同じ作業フォルダへ置く</span></div>

@@ -13,6 +13,7 @@
   const fileFolderPlan = document.querySelector("#fileFolderPlan");
   const routeGuide = document.querySelector("#routeGuide");
   const readinessChecklist = document.querySelector("#readinessChecklist");
+  const workspaceModeNotice = document.querySelector("#workspaceModeNotice");
   const outputs = {
     caseJson: document.querySelector("#caseOutput"),
     input: document.querySelector("#inputOutput"),
@@ -812,6 +813,16 @@
   document.querySelector("#downloadMoltemplateButton").addEventListener("click", () => downloadText("system.lt", outputs.moltemplate.value));
   document.querySelector("#downloadProcedureButton").addEventListener("click", () => downloadText("procedure.md", outputs.procedure.value));
   document.querySelector("#downloadZipButton").addEventListener("click", downloadZip);
+  document.querySelectorAll("[data-workspace-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const mode = button.dataset.workspaceMode;
+      if (mode === "cg") {
+        workspaceModeNotice.textContent = "CG workspaceはWeb Safe Modeで有効です。公開デモ条件からcase.jsonとin.lammpsを生成できます。";
+        return;
+      }
+      workspaceModeNotice.textContent = `${button.textContent} はLocal版で有効になるworkspaceです。Web Safe Modeでは表示のみで、実行・保存・外部ツール連携は無効です。`;
+    });
+  });
 
   renderForm(state.caseType, {});
   generate();
