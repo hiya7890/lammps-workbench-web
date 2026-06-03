@@ -2,17 +2,16 @@
   const MODES = {
     web_safe: {
       label: "Web Safe Mode",
-      allowed: new Set(["generate", "preview", "copy", "download", "zip", "manualCommand"])
+      allowed: new Set(["generate", "copy", "download", "zip", "manualCommand"])
     },
     local_prepare_only: {
       label: "Local Prepare Only",
-      allowed: new Set(["generate", "preview", "copy", "download", "zip", "manualCommand"])
+      allowed: new Set(["generate", "copy", "download", "zip", "manualCommand"])
     },
     local_runner: {
       label: "Local Runner Mode",
       allowed: new Set([
         "generate",
-        "preview",
         "copy",
         "download",
         "zip",

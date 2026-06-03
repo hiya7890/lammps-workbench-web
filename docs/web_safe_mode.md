@@ -18,7 +18,9 @@ It can:
 - Generate a short procedure note.
 - Generate safe text scaffolds such as `packmol.inp` or Moltemplate `.lt` drafts when generated fully in the browser.
 - Show manual local command examples.
-- Preview and download generated files.
+- Show generated text and download generated files.
+
+Web Safe Mode intentionally does not include the old simple molecule/box preview panel. The source of truth is the generated text files and the handoff procedure.
 
 It must not:
 

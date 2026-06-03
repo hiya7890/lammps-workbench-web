@@ -8,7 +8,6 @@
   const caseSummary = document.querySelector("#caseSummary");
   const fileChecklist = document.querySelector("#fileChecklist");
   const toolGuide = document.querySelector("#toolGuide");
-  const moleculePreview = document.querySelector("#moleculePreview");
   const validationPanel = document.querySelector("#validationPanel");
   const folderPlan = document.querySelector("#folderPlan");
   const fileFolderPlan = document.querySelector("#fileFolderPlan");
@@ -195,7 +194,6 @@
     outputs.handoff.value = buildHandoffText(caseDefinition, validation);
     outputs.runCommand.textContent = buildRunCommandText(currentRunFolder(caseDefinition));
     renderCaseSummary(caseDefinition);
-    renderMoleculePreview(caseDefinition);
     renderFileChecklist(caseDefinition);
     renderToolGuide(caseDefinition);
     renderFolderPlan(caseDefinition);
@@ -421,71 +419,6 @@
       list.appendChild(item);
     });
     readinessChecklist.replaceChildren(title, list);
-  }
-
-  function renderMoleculePreview(caseDefinition) {
-    const current = core.serializeCase(caseDefinition);
-    moleculePreview.replaceChildren();
-    if (current.caseType === "cg_scaffold") {
-      renderCgPreview(current);
-      return;
-    }
-    renderBoxPreview(current);
-  }
-
-  function renderCgPreview(current) {
-    const chainCount = Math.max(1, Math.floor(Number(current.chainCount || 1)));
-    const repeatCount = Math.max(1, Math.floor(Number(current.repeatCountPerChain || 1)));
-    const visibleChains = Math.min(chainCount, 6);
-    const visibleBeads = Math.min(repeatCount, 24);
-    const caption = document.createElement("div");
-    caption.className = "preview-caption";
-    caption.textContent = `${chainCount} chains x ${repeatCount} beads/chain = ${chainCount * repeatCount} beads`;
-    moleculePreview.appendChild(caption);
-    const chains = document.createElement("div");
-    chains.className = "chain-preview";
-    for (let chainIndex = 0; chainIndex < visibleChains; chainIndex += 1) {
-      const row = document.createElement("div");
-      row.className = "chain-row";
-      for (let beadIndex = 0; beadIndex < visibleBeads; beadIndex += 1) {
-        const bead = document.createElement("span");
-        bead.className = "bead-dot";
-        bead.title = `chain ${chainIndex + 1}, bead ${beadIndex + 1}`;
-        row.appendChild(bead);
-      }
-      if (repeatCount > visibleBeads) {
-        const more = document.createElement("span");
-        more.className = "preview-more";
-        more.textContent = "...";
-        row.appendChild(more);
-      }
-      chains.appendChild(row);
-    }
-    if (chainCount > visibleChains) {
-      const moreChains = document.createElement("div");
-      moreChains.className = "preview-more-line";
-      moreChains.textContent = `+ ${chainCount - visibleChains} more chains`;
-      chains.appendChild(moreChains);
-    }
-    moleculePreview.appendChild(chains);
-  }
-
-  function renderBoxPreview(current) {
-    const density = Number(current.density || 0);
-    const particles = Math.max(12, Math.min(48, Math.round((density || 0.75) * 48)));
-    const caption = document.createElement("div");
-    caption.className = "preview-caption";
-    caption.textContent = `${current.caseType} / ${particles} representative particles`;
-    const box = document.createElement("div");
-    box.className = "particle-box";
-    for (let index = 0; index < particles; index += 1) {
-      const dot = document.createElement("span");
-      dot.className = "particle-dot";
-      dot.style.left = `${8 + ((index * 37) % 84)}%`;
-      dot.style.top = `${10 + ((index * 53) % 78)}%`;
-      box.appendChild(dot);
-    }
-    moleculePreview.append(caption, box);
   }
 
   function renderToolGuide(caseDefinition) {

@@ -98,7 +98,7 @@ Shared:
 
 Web Safe Mode:
 
-- `apps/web/webSafeApp.js`: dynamic form, preview, browser downloads
+- `apps/web/webSafeApp.js`: dynamic form, generated text display, browser downloads
 
 Local Runner Mode:
 
@@ -146,7 +146,7 @@ Keep in Web Safe Mode:
 
 - static UI
 - dynamic form display from `core/`
-- preview
+- generated text display
 - browser download
 - future browser-only zip download
 

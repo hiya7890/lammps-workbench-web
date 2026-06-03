@@ -9,7 +9,7 @@ Web Safe Mode is the public demo and operation-checking version of LAMMPS Workbe
 - Runs as a static browser app.
 - Stays within the browser.
 - Generates public-demo `case.json`, `in.lammps`, and `procedure.md`.
-- Provides preview and browser download.
+- Shows generated text and browser download.
 - Does not execute LAMMPS or any local command.
 - Does not upload files.
 - Does not save to external services.
@@ -27,7 +27,7 @@ Web Safe Mode owns only static generation features:
 - `case.json` generation
 - `in.lammps` generation
 - `procedure.md` generation
-- preview
+- generated text display
 - browser download
 - public demo documentation
 

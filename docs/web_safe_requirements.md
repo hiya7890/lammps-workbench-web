@@ -65,7 +65,7 @@ Web Safe Mode should support:
 - `case.json` serialization
 - `in.lammps` generation
 - `procedure.md` generation
-- browser-side preview
+- browser-side generated text display
 - copy-to-clipboard
 - browser download
 - browser-side ZIP creation for generated text files
