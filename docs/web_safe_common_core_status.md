@@ -174,12 +174,13 @@ Move AA / interface / adhesion field schema into core only after their public-sa
 
 ## UI Commonization Policy
 
-Local GUI and Web Safe Mode should share the same visual foundation wherever possible. The current shared foundation is `shared/ui/workbench-shell.css`, loaded by both `public/index.html` and `apps/web/index.html`.
+Local GUI and Web Safe Mode should share the same visual and interaction foundation wherever possible. The current shared foundation is `shared/ui/workbench-shell.css` and `shared/ui/workbenchUi.js`, loaded by both `public/index.html` and `apps/web/index.html`.
 
 Shared UI scope:
 
 - color, background, typography, panel, and button tokens
 - Workbench shell appearance
+- tab activation, active-state toggles, and workflow-card primitives
 - future shared Molecule Builder / Protocol / Files component styles
 
 Separated UI scope:
@@ -189,7 +190,7 @@ Separated UI scope:
 - LAMMPS/PACKMOL/Moltemplate/Python/OVITO integration controls
 - execution, log reading, dump handling, and analysis views
 
-When changing appearance that should apply to both Local and Web, update `shared/ui/workbench-shell.css` first. Use each entry-specific stylesheet only for mode-specific constraints or layout that cannot be shared safely.
+When changing appearance that should apply to both Local and Web, update `shared/ui/workbench-shell.css` first. When changing button/tab/card interaction behavior that should apply to both modes, update `shared/ui/workbenchUi.js` first. Use each entry-specific stylesheet or script only for mode-specific constraints or layout that cannot be shared safely.
 
 ## Web Safe Mode Prohibited Changes
 

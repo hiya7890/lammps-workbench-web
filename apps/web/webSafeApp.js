@@ -1,5 +1,6 @@
 (function initWebSafeApp() {
   const core = window.LammpsCaseCore;
+  const ui = window.WorkbenchUi;
   const caseForm = document.querySelector("#caseForm");
   const workflowCards = document.querySelector("#workflowCards");
   const presetSelect = document.querySelector("#presetSelect");
@@ -31,10 +32,7 @@
   document.querySelector("#versionBadge").textContent = `core ${core.VERSION}`;
 
   function createOption(value, label) {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = label;
-    return option;
+    return ui.createOption(value, label);
   }
 
   function createInput(field, value) {
@@ -126,22 +124,18 @@
     const cards = core.listCaseDefinitions()
       .filter((definition) => definition.modes?.includes("web_safe"))
       .map((definition) => {
-        const card = document.createElement("button");
-        card.type = "button";
-        card.className = `workflow-card${definition.id === currentCaseType ? " is-active" : ""}`;
-        const kind = document.createElement("span");
-        kind.textContent = workflowKind(definition);
-        const title = document.createElement("strong");
-        title.textContent = definition.label;
-        const description = document.createElement("small");
-        description.textContent = definition.description || "";
-        card.append(kind, title, description);
-        card.addEventListener("click", () => {
+        return ui.createWorkflowCard({
+          active: definition.id === currentCaseType,
+          description: definition.description || "",
+          kind: workflowKind(definition),
+          title: definition.label,
+          value: definition.id,
+          onClick: () => {
           const defaults = core.buildCaseFromFieldValues(definition.id, {});
           renderForm(definition.id, defaults);
           generate();
+          }
         });
-        return card;
       });
     workflowCards.replaceChildren(...cards);
   }
@@ -325,9 +319,7 @@
   }
 
   function renderProcedureModeButtons() {
-    document.querySelectorAll("[data-procedure-mode]").forEach((button) => {
-      button.classList.toggle("is-active", button.dataset.procedureMode === state.procedureMode);
-    });
+    ui.setActiveByDataset("[data-procedure-mode]", "procedureMode", state.procedureMode);
   }
 
   function renderRouteGuide(caseDefinition) {
@@ -784,19 +776,21 @@
   }
 
   function showTab(targetId) {
-    document.querySelectorAll(".tab-view").forEach((view) => {
-      view.classList.toggle("is-active", view.id === targetId);
-    });
-    document.querySelectorAll("[data-tab-target]").forEach((button) => {
-      button.classList.toggle("is-active", button.dataset.tabTarget === targetId);
+    ui.setTabState({
+      buttons: "[data-tab-target]",
+      panes: ".tab-view",
+      targetId,
+      hiddenClass: null
     });
   }
 
   document.querySelector("#generateButton").addEventListener("click", generate);
   document.querySelector("#resetButton").addEventListener("click", resetToDefaults);
   document.querySelector("#applyPresetButton").addEventListener("click", applySelectedPreset);
-  document.querySelectorAll("[data-tab-target]").forEach((button) => {
-    button.addEventListener("click", () => showTab(button.dataset.tabTarget));
+  ui.bindTabs({
+    buttons: "[data-tab-target]",
+    panes: ".tab-view",
+    hiddenClass: null
   });
   document.querySelector("#copyCaseButton").addEventListener("click", () => copyText(outputs.caseJson.value, "case.json"));
   document.querySelector("#copyInputButton").addEventListener("click", () => copyText(outputs.input.value, "in.lammps"));
