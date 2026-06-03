@@ -120,6 +120,11 @@ The representative `cg_scaffold` path now reads these fields from `core/caseDefi
 - Web Safe Mode inclusion for `cg_scaffold` as a file generator only
 - Local GUI startup normalization from core defaults
 - Local GUI static CG scaffold values are either equal to core defaults or explicitly covered by legacy normalization
+- Local GUI loads shared UI primitives from `/shared/ui/workbenchUi.js`
+- Local GUI loads shared capability definitions from `/shared/ui/workbenchCapabilities.js`
+- Local Prepare Only locks representative LAMMPS, PACKMOL, Moltemplate, Python, OVITO, project IO, browse, result analysis, and local research-support actions through capability bindings
+- local research-support buttons must not bypass capability mode with direct click handlers
+- Local server must serve shared UI assets from `/shared/...`
 - `web_safe_common_core_status.md` is included in public build and distribution allowlists
 - Web Safe Mode forbidden-capability audit
 - shared Web / Local generation equality for representative public cases
@@ -186,6 +191,7 @@ Shared UI scope:
 - Workbench shell appearance
 - tab activation, active-state toggles, and workflow-card primitives
 - capability-driven disabled / locked controls
+- shared capability definitions for `web_safe`, `local_prepare_only`, and `local_runner`
 - future shared Molecule Builder / Protocol / Files component styles
 
 Separated UI scope:
@@ -196,6 +202,8 @@ Separated UI scope:
 - execution, log reading, dump handling, and analysis views
 
 When changing appearance that should apply to both Local and Web, update `shared/ui/workbench-shell.css` first. When changing button/tab/card interaction behavior that should apply to both modes, update `shared/ui/workbenchUi.js` first. Use each entry-specific stylesheet or script only for mode-specific constraints or layout that cannot be shared safely.
+
+When changing whether an operation is allowed in Web Safe Mode, Local Prepare Only, or Local Runner Mode, update `shared/ui/workbenchCapabilities.js` first. Local GUI action buttons that perform execution, local file IO, tool launch, result analysis, or research-support package generation should be wired through capability checks instead of direct click handlers.
 
 ## Web Safe Mode Prohibited Changes
 
