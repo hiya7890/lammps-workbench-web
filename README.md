@@ -118,6 +118,7 @@ npm run audit:public
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Web Safe Requirements](docs/web_safe_requirements.md)
 - [Web Safe Mode](docs/web_safe_mode.md)
 - [Local Runner Mode](docs/local_runner_mode.md)
 - [Local Installation Guide](docs/local_installation_guide.md)
